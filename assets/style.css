@@ -110,3 +110,5 @@ audio { width: 100%; margin-bottom: 14px; }
   .t { font-size: 14px; }
   .hook { max-width: 100%; }
 }
+.fnote { color: var(--dim); margin: 10px 0 0; max-width: 40ch; }
+.empty { color: var(--dim); font-size: 18px; }

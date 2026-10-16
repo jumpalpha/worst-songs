@@ -53,17 +53,23 @@
       bump("play");
     });
     if (player) player.addEventListener("ended", function () { counted = false; });
+    share();
+  }
+
+  function share() {
     var btn = document.querySelector("[data-share]");
     if (btn) btn.addEventListener("click", function () {
       var data = { title: document.title, url: location.href };
       if (navigator.share) { navigator.share(data).catch(function () {}); return; }
       navigator.clipboard.writeText(location.href).then(function () {
+        var label = btn.textContent;
         btn.textContent = "Link copied!";
-        setTimeout(function () { btn.textContent = "Share this crime"; }, 1800);
+        setTimeout(function () { btn.textContent = label; }, 1800);
       });
     });
   }
 
   if (!cfg.url) return;
+  if (!slug) { share(); return; }  // hidden friend songs: no counters
   if (slug === "home") home(); else song();
 })();

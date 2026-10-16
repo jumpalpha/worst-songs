@@ -8,6 +8,14 @@ Adding a song:
   4. python3 build.py, then commit and push.
   5. Add its counter row in Supabase once:
        insert into public.songs (slug, title) values ('37', 'Title');
+
+Friend songs (hidden at /friend-songs/, not linked from the main page, noindex):
+  1. friend-songs/<slug>/audio.mp3 and (optional) friend-songs/<slug>/cover.jpg
+  2. (optional) data/friend-lyrics/<slug>.txt
+  3. an entry in data/friend-songs.json:
+       {"slug": "jake-birthday", "title": "...", "for": "Jake", "duration": 180.0, "note": ""}
+  4. python3 build.py, then commit and push.
+  Friend songs have no counters, so nothing goes in Supabase.
 """
 import html, json, os, re
 
@@ -71,13 +79,14 @@ def yt_embed(url):
     return ""
 
 
-def head(title, desc, url, image):
+def head(title, desc, url, image, hidden=False):
+    robots = '<meta name="robots" content="noindex, nofollow, noarchive">\n' if hidden else ""
     return f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{e(title)}</title>
+{robots}<title>{e(title)}</title>
 <meta name="description" content="{e(desc)}">
 <meta property="og:title" content="{e(title)}">
 <meta property="og:description" content="{e(desc)}">
@@ -174,9 +183,78 @@ def write(rel, text):
     open(p, "w", encoding="utf-8").write(text)
 
 
+FRIEND_PATH = f"{PATH}/friend-songs"
+friends = json.load(open(os.path.join(ROOT, "data", "friend-songs.json"), encoding="utf-8"))
+
+
+def friend_cover(f):
+    if os.path.exists(os.path.join(ROOT, "friend-songs", f["slug"], "cover.jpg")):
+        return f"{FRIEND_PATH}/{f['slug']}/cover.jpg"
+    return f"{PATH}/assets/brand/logo.png"
+
+
+def friend_page(f):
+    lp = os.path.join(ROOT, "data", "friend-lyrics", f"{f['slug']}.txt")
+    lyr = lyrics_html(open(lp, encoding="utf-8").read()) if os.path.exists(lp) else ""
+    who = f'<div class="badge">A SONG FOR <b>{e(f["for"])}</b></div>' if f.get("for") else '<div class="badge">FRIEND SONG</div>'
+    note = f'<p class="fnote">{e(f["note"])}</p>' if f.get("note") else ""
+    dur = f'<div class="counts"><span>{mmss(f["duration"])}</span></div>' if f.get("duration") else ""
+    return head(f["title"], "A song made for a friend.", f"{BASE}/friend-songs/{f['slug']}/",
+                BASE + friend_cover(f)[len(PATH):], hidden=True) + f"""<body class="song" data-slug="">
+<header class="bar"><a class="brand" href="{FRIEND_PATH}/">FRIEND SONGS</a></header>
+<main class="wrap">
+  <section class="hero">
+    <img class="cover" src="{friend_cover(f)}" alt="" width="720" height="720">
+    <div class="meta">
+      {who}
+      <h1>{e(f['title'])}</h1>
+      <audio id="player" controls preload="metadata" src="{FRIEND_PATH}/{f['slug']}/audio.mp3"></audio>
+      {dur}
+      {note}
+      <button class="share" type="button" data-share>Share this song</button>
+    </div>
+  </section>
+  {yt_embed(f.get('hook_url'))}
+  {f'<section class="lyrics"><h2>Lyrics</h2>{lyr}</section>' if lyr else ''}
+  <nav class="pager"><a href="{FRIEND_PATH}/">All friend songs</a><a href="{PATH}/">Worst Song Ever</a></nav>
+</main>
+<footer class="foot">Made on purpose. &copy; Worst Song Ever</footer>
+</body>
+</html>
+"""
+
+
+def friend_index():
+    cards = "\n".join(
+        f"""<a class="card" href="{FRIEND_PATH}/{f['slug']}/">
+  <img src="{friend_cover(f)}" alt="" loading="lazy" width="720" height="720">
+  <div class="cardtext"><span class="num">{e('For ' + f['for']) if f.get('for') else 'Friend song'}</span><span class="t">{e(f['title'])}</span></div>
+</a>""" for f in friends)
+    body = f'<div class="grid">\n{cards}\n    </div>' if friends else '<p class="empty">No friend songs yet. Check back soon.</p>'
+    return head("Friend Songs", "Songs made for friends.", f"{BASE}/friend-songs/",
+                f"{BASE}/assets/brand/logo.png", hidden=True) + f"""<body class="home" data-slug="">
+<header class="bar"><a class="brand" href="{FRIEND_PATH}/">FRIEND SONGS</a></header>
+<main class="wrap">
+  <section class="intro">
+    <h1>FRIEND<br>SONGS</h1>
+    <p>Made for the people who asked for it.</p>
+  </section>
+  <section>
+    {body}
+  </section>
+</main>
+<footer class="foot">Made on purpose. &copy; Worst Song Ever</footer>
+</body>
+</html>
+"""
+
+
 write("index.html", index_page())
+write("friend-songs/index.html", friend_index())
+for f in friends:
+    write(f"friend-songs/{f['slug']}/index.html", friend_page(f))
 for i, s in enumerate(songs):
     nxt = songs[i - 1] if i > 0 else None          # newer
     prv = songs[i + 1] if i + 1 < len(songs) else None  # older
     write(f"{s['n']}/index.html", song_page(s, prv, nxt))
-print(f"built {len(songs)} song pages")
+print(f"built {len(songs)} song pages, {len(friends)} friend song pages")
