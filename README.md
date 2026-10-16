@@ -1,6 +1,6 @@
 # Worst Song Ever
 
-Home of every Worst Song Ever installment: https://jumpalpha.github.io/worst-songs/
+Home of every Worst Song Ever installment: https://worstsong.com/
 
 Each song lives at `/<number>/` (e.g. `/36/`). Visit and play counts are stored in Supabase (project `worst-songs`).
 
