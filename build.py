@@ -9,7 +9,8 @@ Adding a song:
   5. Add its counter row in Supabase once:
        insert into public.songs (slug, title) values ('37', 'Title');
 
-Friend songs (hidden at /friend-songs/, not linked from the main page, noindex):
+Friend songs (hidden at /friend-songs/, reachable only via the footer (c) on the home page, noindex).
+NEVER put last names on friend-song pages: first name (or nickname) only.
   1. friend-songs/<slug>/audio.mp3 and (optional) friend-songs/<slug>/cover.jpg
   2. (optional) data/friend-lyrics/<slug>.txt
   3. an entry in data/friend-songs.json:
