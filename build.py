@@ -20,6 +20,14 @@ songs.sort(key=lambda s: s["n"], reverse=True)
 e = html.escape
 
 
+def ver(rel):
+    import hashlib
+    return hashlib.md5(open(os.path.join(ROOT, rel), "rb").read()).hexdigest()[:8]
+
+
+CSSV, JSV = ver("assets/style.css"), ver("assets/stats.js")
+
+
 def mmss(sec):
     sec = int(round(sec))
     return f"{sec // 60}:{sec % 60:02d}"
@@ -81,9 +89,9 @@ def head(title, desc, url, image):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{PATH}/assets/style.css">
+<link rel="stylesheet" href="{PATH}/assets/style.css?v={CSSV}">
 <script>window.WSE={{url:"{SITE['supabase_url']}",key:"{SITE['supabase_key']}"}};</script>
-<script src="{PATH}/assets/stats.js" defer></script>
+<script src="{PATH}/assets/stats.js?v={JSV}" defer></script>
 </head>
 """
 
