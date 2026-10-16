@@ -170,7 +170,7 @@ def index_page():
     </div>
   </section>
 </main>
-<footer class="foot">Made on purpose. &copy; Worst Song Ever</footer>
+<footer class="foot">Made on purpose. <a class="sneak" href="{PATH}/friend-songs/" rel="nofollow" aria-label="Worst Song Ever">&copy;</a> Worst Song Ever</footer>
 <script>window.WSE_TITLES={json.dumps(titles, ensure_ascii=False)};</script>
 </body>
 </html>
