@@ -17,6 +17,15 @@ NEVER put last names on friend-song pages: first name (or nickname) only.
        {"slug": "jake-birthday", "title": "...", "for": "Jake", "duration": 180.0, "note": ""}
   4. python3 build.py, then commit and push.
   Friend songs have no counters, so nothing goes in Supabase.
+
+Custom songs (public at /custom/, paid orders whose customer chose "Yes, post it").
+First names only. Never number them or put them in data/songs.json.
+  1. custom/<slug>/audio.mp3 and (optional) custom/<slug>/cover.jpg
+  2. (optional) data/custom-lyrics/<slug>.txt
+  3. an entry in data/custom-songs.json:
+       {"slug": "jen-birthday-2026", "title": "...", "for": "Jen", "occasion": "Birthday",
+        "duration": 180.0, "added": "2026-10-18", "note": ""}
+  4. python3 build.py, then commit and push. No Supabase row.
 """
 import html, json, os, re
 
@@ -159,7 +168,7 @@ def index_page():
     <h1>WORST SONG<br>EVER</h1>
     <p>Intentionally terrible songs. Genuinely catchy. You've been warned.</p>
     <div class="counts big"><span>&#128064; <b data-total-visits>&ndash;</b> visits</span><span>&#127911; <b data-total-plays>&ndash;</b> plays</span><span>{len(songs)} songs</span></div>
-    <a class="reqbtn" href="{PATH}/request/">Want your own song? <b>$20</b> &rarr;</a>
+    <div class="reqrow"><a class="reqbtn" href="{PATH}/request/">Want your own song? <b>$20</b> &rarr;</a><a class="reqlink" href="{PATH}/custom/">Hear custom songs</a></div>
   </section>
   <section class="board" hidden>
     <h2>Most Played <span>(the worst of the worst)</span></h2>
@@ -251,7 +260,86 @@ def friend_index():
 """
 
 
+CUSTOM_PATH = f"{PATH}/custom"
+cpath = os.path.join(ROOT, "data", "custom-songs.json")
+customs = json.load(open(cpath, encoding="utf-8")) if os.path.exists(cpath) else []
+customs.sort(key=lambda c: c.get("added", ""), reverse=True)
+
+
+def custom_cover(c):
+    if os.path.exists(os.path.join(ROOT, "custom", c["slug"], "cover.jpg")):
+        return f"{CUSTOM_PATH}/{c['slug']}/cover.jpg"
+    return f"{PATH}/assets/brand/logo.png"
+
+
+def custom_label(c):
+    occ = (c.get("occasion") or "").strip()
+    occ = "" if occ.lower() in ("", "other", "just because") else occ.upper() + " "
+    return f"A {occ}SONG FOR"
+
+
+def custom_page(c):
+    lp = os.path.join(ROOT, "data", "custom-lyrics", f"{c['slug']}.txt")
+    lyr = lyrics_html(open(lp, encoding="utf-8").read()) if os.path.exists(lp) else ""
+    who = f'<div class="badge">{e(custom_label(c))} <b>{e(c["for"])}</b></div>'
+    note = f'<p class="fnote">{e(c["note"])}</p>' if c.get("note") else ""
+    dur = f'<div class="counts"><span>{mmss(c["duration"])}</span></div>' if c.get("duration") else ""
+    return head(c["title"], f"A custom song made for {c['for']}.", f"{BASE}/custom/{c['slug']}/",
+                BASE + custom_cover(c)[len(PATH):]) + f"""<body class="song" data-slug="">
+<header class="bar"><a class="brand" href="{CUSTOM_PATH}/">CUSTOM SONGS</a></header>
+<main class="wrap">
+  <section class="hero">
+    <img class="cover" src="{custom_cover(c)}" alt="" width="720" height="720">
+    <div class="meta">
+      {who}
+      <h1>{e(c['title'])}</h1>
+      <audio id="player" controls preload="metadata" src="{CUSTOM_PATH}/{c['slug']}/audio.mp3"></audio>
+      {dur}
+      {note}
+      <button class="share" type="button" data-share>Share this song</button>
+    </div>
+  </section>
+  {f'<section class="lyrics"><h2>Lyrics</h2>{lyr}</section>' if lyr else ''}
+  <section class="ctaband"><h2>Want one like this?</h2><a class="reqbtn" href="{PATH}/request/">Request your song <b>$20</b> &rarr;</a></section>
+  <nav class="pager"><a href="{CUSTOM_PATH}/">All custom songs</a><a href="{PATH}/">Worst Song Ever</a></nav>
+</main>
+<footer class="foot">Made on purpose. &copy; Worst Song Ever</footer>
+</body>
+</html>
+"""
+
+
+def custom_index():
+    cards = "\n".join(
+        f"""<a class="card" href="{CUSTOM_PATH}/{c['slug']}/">
+  <img src="{custom_cover(c)}" alt="" loading="lazy" width="720" height="720">
+  <div class="cardtext"><span class="num">{e('For ' + c['for'])}</span><span class="t">{e(c['title'])}</span></div>
+</a>""" for c in customs)
+    body = (f'<div class="grid">\n{cards}\n    </div>' if customs
+            else '<p class="empty">The first custom songs are being written right now. Yours could be next.</p>')
+    return head("Custom Songs", "Custom songs made to order for birthdays, weddings, anniversaries and just because.",
+                f"{BASE}/custom/", f"{BASE}/assets/brand/logo.png") + f"""<body class="home" data-slug="">
+<header class="bar"><a class="brand" href="{PATH}/">WORST SONG EVER</a></header>
+<main class="wrap">
+  <section class="intro">
+    <h1>CUSTOM<br>SONGS</h1>
+    <p>Made to order for birthdays, weddings, anniversaries, and just because.</p>
+    <a class="reqbtn" href="{PATH}/request/">Want your own song? <b>$20</b> &rarr;</a>
+  </section>
+  <section>
+    {body}
+  </section>
+</main>
+<footer class="foot">Made on purpose. &copy; Worst Song Ever</footer>
+</body>
+</html>
+"""
+
+
 write("index.html", index_page())
+write("custom/index.html", custom_index())
+for c in customs:
+    write(f"custom/{c['slug']}/index.html", custom_page(c))
 write("friend-songs/index.html", friend_index())
 for f in friends:
     write(f"friend-songs/{f['slug']}/index.html", friend_page(f))
@@ -259,4 +347,4 @@ for i, s in enumerate(songs):
     nxt = songs[i - 1] if i > 0 else None          # newer
     prv = songs[i + 1] if i + 1 < len(songs) else None  # older
     write(f"{s['n']}/index.html", song_page(s, prv, nxt))
-print(f"built {len(songs)} song pages, {len(friends)} friend song pages")
+print(f"built {len(songs)} song pages, {len(customs)} custom song pages, {len(friends)} friend song pages")
