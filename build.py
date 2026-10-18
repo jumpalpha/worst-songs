@@ -24,8 +24,12 @@ First names only. Never number them or put them in data/songs.json.
   2. (optional) data/custom-lyrics/<slug>.txt
   3. an entry in data/custom-songs.json:
        {"slug": "jen-birthday-2026", "title": "...", "for": "Jen", "occasion": "Birthday",
-        "duration": 180.0, "added": "2026-10-18", "note": ""}
-  4. python3 build.py, then commit and push. No Supabase row.
+        "genre": "Pop, 80s", "duration": 180.0, "added": "2026-10-18", "note": ""}
+  4. python3 build.py, then commit and push.
+  5. Add its counter row in Supabase once (prefix "c-"):
+       insert into public.songs (slug, title) values ('c-jen-birthday-2026', 'Title');
+     Visitors rate custom songs 1-10 (public.rate / public.custom_stats); the score shows
+     as a mix of silly items (assets/custom.js).
 """
 import html, json, os, re
 
@@ -43,7 +47,7 @@ def ver(rel):
     return hashlib.md5(open(os.path.join(ROOT, rel), "rb").read()).hexdigest()[:8]
 
 
-CSSV, JSV = ver("assets/style.css"), ver("assets/stats.js")
+CSSV, JSV, CJSV = ver("assets/style.css"), ver("assets/stats.js"), ver("assets/custom.js")
 
 
 def mmss(sec):
@@ -89,7 +93,7 @@ def yt_embed(url):
     return ""
 
 
-def head(title, desc, url, image, hidden=False):
+def head(title, desc, url, image, hidden=False, extra=""):
     robots = '<meta name="robots" content="noindex, nofollow, noarchive">\n' if hidden else ""
     return f"""<!doctype html>
 <html lang="en">
@@ -111,7 +115,7 @@ def head(title, desc, url, image, hidden=False):
 <link rel="stylesheet" href="{PATH}/assets/style.css?v={CSSV}">
 <script>window.WSE={{url:"{SITE['supabase_url']}",key:"{SITE['supabase_key']}"}};</script>
 <script src="{PATH}/assets/stats.js?v={JSV}" defer></script>
-</head>
+{extra}</head>
 """
 
 
@@ -272,10 +276,17 @@ def custom_cover(c):
     return f"{PATH}/assets/brand/logo.png"
 
 
+def custom_genres(c):
+    return [g.strip() for g in (c.get("genre") or "").split(",") if g.strip()]
+
+
 def custom_label(c):
     occ = (c.get("occasion") or "").strip()
     occ = "" if occ.lower() in ("", "other", "just because") else occ.upper() + " "
     return f"A {occ}SONG FOR"
+
+
+CUSTOM_JS = f'<script src="{PATH}/assets/custom.js?v={CJSV}" defer></script>\n'
 
 
 def custom_page(c):
@@ -283,21 +294,32 @@ def custom_page(c):
     lyr = lyrics_html(open(lp, encoding="utf-8").read()) if os.path.exists(lp) else ""
     who = f'<div class="badge">{e(custom_label(c))} <b>{e(c["for"])}</b></div>'
     note = f'<p class="fnote">{e(c["note"])}</p>' if c.get("note") else ""
-    dur = f'<div class="counts"><span>{mmss(c["duration"])}</span></div>' if c.get("duration") else ""
+    tags = "".join(f'<span class="gtag">{e(g)}</span>' for g in custom_genres(c))
+    dur = f'<span>{mmss(c["duration"])}</span>' if c.get("duration") else ""
     return head(c["title"], f"A custom song made for {c['for']}.", f"{BASE}/custom/{c['slug']}/",
-                BASE + custom_cover(c)[len(PATH):]) + f"""<body class="song" data-slug="">
+                BASE + custom_cover(c)[len(PATH):], extra=CUSTOM_JS) + f"""<body class="song" data-slug="c-{c['slug']}">
 <header class="bar"><a class="brand" href="{CUSTOM_PATH}/">CUSTOM SONGS</a></header>
 <main class="wrap">
   <section class="hero">
-    <img class="cover" src="{custom_cover(c)}" alt="" width="720" height="720">
+    <img class="cover" src="{custom_cover(c)}" alt="Cover art for {e(c['title'])}" width="720" height="720">
     <div class="meta">
       {who}
       <h1>{e(c['title'])}</h1>
+      <div class="gtags">{tags}</div>
       <audio id="player" controls preload="metadata" src="{CUSTOM_PATH}/{c['slug']}/audio.mp3"></audio>
-      {dur}
+      <div class="counts"><span>&#127911; <b data-plays>&ndash;</b> plays</span>{dur}</div>
       {note}
       <button class="share" type="button" data-share>Share this song</button>
     </div>
+  </section>
+  <section class="rate" data-rate="c-{c['slug']}">
+    <h2>Song Score</h2>
+    <p class="cur" data-current>Loading&hellip;</p>
+    <label class="rlabel" for="rate-range">How stuck in your head is it? <b data-num>5</b>/10</label>
+    <input id="rate-range" type="range" min="1" max="10" step="1" value="5">
+    <p class="preview">That's <span data-preview></span>.</p>
+    <button type="button" class="reqbtn">Rate it</button>
+    <p class="rmsg" data-msg aria-live="polite"></p>
   </section>
   {f'<section class="lyrics"><h2>Lyrics</h2>{lyr}</section>' if lyr else ''}
   <section class="ctaband"><h2>Want one like this?</h2><a class="reqbtn" href="{PATH}/request/">Request your song <b>$20</b> &rarr;</a></section>
@@ -311,14 +333,23 @@ def custom_page(c):
 
 def custom_index():
     cards = "\n".join(
-        f"""<a class="card" href="{CUSTOM_PATH}/{c['slug']}/">
+        f"""<a class="card" href="{CUSTOM_PATH}/{c['slug']}/" data-cslug="c-{c['slug']}" data-added="{e(c.get('added', ''))}" data-genres="{e('|'.join(custom_genres(c)))}">
   <img src="{custom_cover(c)}" alt="" loading="lazy" width="720" height="720">
-  <div class="cardtext"><span class="num">{e('For ' + c['for'])}</span><span class="t">{e(c['title'])}</span></div>
+  <div class="cardtext"><span class="num">{e('For ' + c['for'])}</span><span class="t">{e(c['title'])}</span>
+  <span class="c" data-mix><span class="mix none">&nbsp;</span></span>
+  <span class="c">{" &middot; ".join(e(g) for g in custom_genres(c))}{" &middot; " if custom_genres(c) else ""}&#127911; <b data-cplays>&ndash;</b></span></div>
 </a>""" for c in customs)
-    body = (f'<div class="grid">\n{cards}\n    </div>' if customs
+    genres = sorted({g for c in customs for g in custom_genres(c)}, key=str.lower)
+    chips = '<button type="button" class="chipf on" data-genre-filter="all" aria-pressed="true">All</button>' + "".join(
+        f'<button type="button" class="chipf" data-genre-filter="{e(g)}" aria-pressed="false">{e(g)}</button>' for g in genres)
+    tools = f"""<div class="ctools">
+      <div class="chipsf" role="group" aria-label="Filter by genre">{chips}</div>
+      <label class="sortl">Sort <select data-sort><option value="new">Newest</option><option value="plays">Most played</option><option value="rated">Top rated</option></select></label>
+    </div>""" if customs else ""
+    body = (f'{tools}\n    <div class="grid" data-custom-grid>\n{cards}\n    </div>' if customs
             else '<p class="empty">The first custom songs are being written right now. Yours could be next.</p>')
     return head("Custom Songs", "Custom songs made to order for birthdays, weddings, anniversaries and just because.",
-                f"{BASE}/custom/", f"{BASE}/assets/brand/logo.png") + f"""<body class="home" data-slug="">
+                f"{BASE}/custom/", f"{BASE}/assets/brand/logo.png", extra=CUSTOM_JS) + f"""<body class="home" data-slug="">
 <header class="bar"><a class="brand" href="{PATH}/">WORST SONG EVER</a></header>
 <main class="wrap">
   <section class="intro">
@@ -328,6 +359,7 @@ def custom_index():
   </section>
   <section>
     {body}
+    <p class="scorehelp">Song scores are out of 10, shown as a pile of random stuff that adds up to the score. A 9 might be 3 earthworms, 5 praying mantises and 1 meteor.</p>
   </section>
 </main>
 <footer class="foot">Made on purpose. &copy; Worst Song Ever</footer>
