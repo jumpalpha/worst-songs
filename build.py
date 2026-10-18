@@ -159,6 +159,7 @@ def index_page():
     <h1>WORST SONG<br>EVER</h1>
     <p>Intentionally terrible songs. Genuinely catchy. You've been warned.</p>
     <div class="counts big"><span>&#128064; <b data-total-visits>&ndash;</b> visits</span><span>&#127911; <b data-total-plays>&ndash;</b> plays</span><span>{len(songs)} songs</span></div>
+    <a class="reqbtn" href="{PATH}/request/">Want your own song? <b>$20</b> &rarr;</a>
   </section>
   <section class="board" hidden>
     <h2>Most Played <span>(the worst of the worst)</span></h2>

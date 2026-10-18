@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Request a Song · Worst Song</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#16121f; --panel:#211b2e; --line:#342b47;
+    --text:#f5f1ff; --muted:#a99fbf; --accent:#ffc531; --ink:#16121f; --error:#ff2e88;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Space Grotesk',system-ui,sans-serif;line-height:1.45}
+  .wrap{max-width:760px;margin:0 auto;padding:40px 16px 64px}
+  .kicker{font-size:14px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+  h1{font-family:'Anton',Impact,sans-serif;font-weight:400;text-transform:uppercase;font-size:clamp(44px,9vw,76px);line-height:.95;margin:0 0 14px}
+  h1 span{color:var(--accent)}
+  .lead{font-size:18px;color:#D6D6D0;margin:0 0 20px}
+  .price{display:inline-flex;align-items:baseline;gap:8px;background:var(--accent);color:var(--ink);border-radius:999px;padding:6px 18px;font-weight:700;margin-bottom:28px}
+  .price b{font-family:'Anton',Impact,sans-serif;font-weight:400;font-size:28px}
+  fieldset{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:22px 20px 8px;margin:0 0 20px}
+  legend{font-family:'Anton',Impact,sans-serif;text-transform:uppercase;font-size:22px;letter-spacing:.02em;padding:0 8px;color:var(--accent)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+  @media (max-width:600px){.row{grid-template-columns:1fr}}
+  .field{margin-bottom:18px}
+  label,.qlabel{display:block;font-weight:700;margin-bottom:6px}
+  .hint{display:block;font-weight:400;font-size:14px;color:var(--muted);margin-top:2px}
+  .req{color:var(--accent)}
+  input[type=text],input[type=email],input[type=tel],input[type=date],textarea{
+    width:100%;font:inherit;color:var(--text);background:#111;border:2px solid var(--line);border-radius:10px;padding:12px 14px;min-height:48px}
+  textarea{min-height:96px;resize:vertical}
+  input:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{position:relative}
+  .chip input{position:absolute;opacity:0;width:1px;height:1px}
+  .chip span{display:inline-flex;align-items:center;min-height:44px;padding:8px 16px;border:2px solid #8A8A84;border-radius:999px;cursor:pointer;font-weight:500}
+  .chip input:checked + span{background:var(--accent);border-color:var(--accent);color:var(--ink);font-weight:700}
+  .chip input:focus-visible + span{outline:2px solid var(--accent);outline-offset:3px}
+  .stack .chip span{width:100%;border-radius:12px}
+  .stack{flex-direction:column}
+  .count{font-size:14px;color:var(--muted);margin-top:8px}
+  .check{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;font-weight:500}
+  .check input{width:22px;height:22px;margin-top:2px;accent-color:var(--accent);flex:0 0 auto}
+  .terms{font-size:15px;color:#D6D6D0;margin:0 0 14px;padding-left:18px}
+  .terms li{margin-bottom:6px}
+  .terms a{color:var(--accent)}
+  .hp{position:absolute;left:-9999px}
+  button{font:inherit;font-weight:700;font-size:20px;min-height:56px;padding:0 36px;border:0;border-radius:999px;background:var(--accent);color:var(--ink);cursor:pointer}
+  button:disabled{opacity:.6;cursor:wait}
+  .error{color:var(--error);font-weight:700;margin:12px 0 0;min-height:1.4em}
+  .done{display:none;text-align:center;padding:40px 20px;border:2px solid var(--accent);border-radius:16px}
+  .done h2{font-family:'Anton',Impact,sans-serif;font-weight:400;text-transform:uppercase;font-size:48px;margin:0 0 10px;color:var(--accent)}
+  .done a{color:var(--accent)}
+  .done a.paybtn{display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 32px;margin:8px 0;border-radius:999px;background:var(--accent);color:var(--ink);font-size:20px;font-weight:700;text-decoration:none}
+  footer{margin-top:28px;font-size:14px;color:var(--muted);text-align:center}
+  footer a{color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <p class="kicker">Custom songs · worstsong.com</p>
+  <h1>Let me make <span>you a song</span></h1>
+  <p class="lead">Give me a couple minutes of info and I'll turn it into a song. Don't overthink it. Quick answers are perfect.</p>
+  <div class="price"><b>$20</b> per song</div>
+
+  <form id="songForm" novalidate>
+    <div class="hp" aria-hidden="true"><label for="website">Leave blank</label><input type="text" id="website" name="website" tabindex="-1" autocomplete="off"></div>
+
+    <fieldset>
+      <legend>Who's it for?</legend>
+      <div class="field">
+        <span class="qlabel" id="forLabel">This song is for… <span class="req">*</span></span>
+        <div class="chips" role="radiogroup" aria-labelledby="forLabel">
+          <label class="chip"><input type="radio" name="songFor" value="Someone else" required checked><span>Someone else</span></label>
+          <label class="chip"><input type="radio" name="songFor" value="Me"><span>Me</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <span class="qlabel" id="occLabel">What's the occasion? <span class="req">*</span></span>
+        <div class="chips" role="radiogroup" aria-labelledby="occLabel">
+          <label class="chip"><input type="radio" name="occasion" value="Birthday" required><span>Birthday</span></label>
+          <label class="chip"><input type="radio" name="occasion" value="Wedding"><span>Wedding</span></label>
+          <label class="chip"><input type="radio" name="occasion" value="Anniversary"><span>Anniversary</span></label>
+          <label class="chip"><input type="radio" name="occasion" value="Graduation"><span>Graduation</span></label>
+          <label class="chip"><input type="radio" name="occasion" value="Retirement"><span>Retirement</span></label>
+          <label class="chip"><input type="radio" name="occasion" value="Just because"><span>Just because</span></label>
+          <label class="chip"><input type="radio" name="occasion" value="Other"><span>Other</span></label>
+        </div>
+      </div>
+      <div class="field"><label for="neededBy">Need it by <span class="req">*</span></label><input type="date" id="neededBy" name="neededBy" required></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>About <span class="pr" data-them="them" data-me="you">them</span></legend>
+      <div class="field"><label for="honoree"><span class="pr" data-them="Their" data-me="Your">Their</span> name <span class="req">*</span></label><input type="text" id="honoree" name="honoree" required></div>
+      <div class="field"><label for="nickname">What do people usually call <span class="pr" data-them="them" data-me="you">them</span>? <span class="hint">This is what goes in the song. Example: Coach, Jen, Grandpa Joe, Smitty.</span></label><input type="text" id="nickname" name="nickname"></div>
+      <div class="field"><label for="whatTheyDo">What <span class="pr" data-them="do they" data-me="do you">do they</span> do? <span class="req">*</span><span class="hint">Job, school, sport, "professional napper"… anything.</span></label><input type="text" id="whatTheyDo" name="whatTheyDo" required></div>
+
+      <div class="field">
+        <span class="qlabel" id="descLabel">Pick a few things that describe <span class="pr" data-them="them" data-me="you">them</span> <span class="req">*</span><span class="hint">At least 3. More is better.</span></span>
+        <div class="chips" role="group" aria-labelledby="descLabel" id="describeGroup">
+          <label class="chip"><input type="checkbox" name="describe" value="Family"><span>Family</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Friends"><span>Friends</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Sports"><span>Sports</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Outdoors / Mountains"><span>Outdoors / Mountains</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Hunting / Fishing"><span>Hunting / Fishing</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Camping / Four-wheeling"><span>Camping / Four-wheeling</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Fitness / Working out"><span>Fitness / Working out</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Cars / Trucks"><span>Cars / Trucks</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Farming / Ranching"><span>Farming / Ranching</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Cooking / BBQ"><span>Cooking / BBQ</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Food / Snacks"><span>Food / Snacks</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Coffee / Energy drinks"><span>Coffee / Energy drinks</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Traveling"><span>Traveling</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Music"><span>Music</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Gaming / Technology"><span>Gaming / Technology</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Social media / TikTok"><span>Social media / TikTok</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Movies / TV / Anime"><span>Movies / TV / Anime</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Reading"><span>Reading</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Animals / Pets"><span>Animals / Pets</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Gardening / Yard work"><span>Gardening / Yard work</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Shopping"><span>Shopping</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Fashion / Style"><span>Fashion / Style</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Crafts / Building things"><span>Crafts / Building things</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Sleeping / Naps"><span>Sleeping / Naps</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Church / Faith"><span>Church / Faith</span></label>
+          <label class="chip"><input type="checkbox" name="describe" value="Other"><span>Other</span></label>
+        </div>
+        <div class="count" id="describeCount" aria-live="polite">0 picked</div>
+      </div>
+
+      <div class="field"><label for="happyPlace">What's <span class="pr" data-them="their" data-me="your">their</span> HAPPY PLACE? <span class="hint">Mountains, beach, backyard, ball field, couch, Costco 😂</span></label><input type="text" id="happyPlace" name="happyPlace"></div>
+      <div class="field"><label for="people">Family, friends, or pets to mention <span class="hint">Names + relationships are plenty. First names only, please.</span></label><textarea id="people" name="people"></textarea></div>
+      <div class="field"><label for="knownFor">What <span class="pr" data-them="are they" data-me="are you">are they</span> known for? <span class="hint">A saying, talent, obsession, funny habit, famous fail…</span></label><input type="text" id="knownFor" name="knownFor"></div>
+      <div class="field"><label for="funnyFact">Give me ONE funny or unusual fact <span class="req">*</span><span class="hint">This is usually where the best lyrics come from.</span></label><textarea id="funnyFact" name="funnyFact" required></textarea></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>The sound</legend>
+      <div class="field">
+        <span class="qlabel" id="styleLabel">Pick a music style <span class="req">*</span><span class="hint">Pick one or more.</span></span>
+        <div class="chips" role="group" aria-labelledby="styleLabel" id="styleGroup">
+          <label class="chip"><input type="checkbox" name="style" value="Pop"><span>Pop</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="Hip-Hop / Rap"><span>Hip-Hop / Rap</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="Country"><span>Country</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="Modern Rock"><span>Modern Rock</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="Classic Rock"><span>Classic Rock</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="Electronic / Dance"><span>Electronic / Dance</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="R&amp;B / Soul"><span>R&amp;B / Soul</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="Indie / Alternative"><span>Indie / Alternative</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="Punk / Pop-Punk"><span>Punk / Pop-Punk</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="Old-School Rap"><span>Old-School Rap</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="Folk / Americana"><span>Folk / Americana</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="Blues / Blues Rock"><span>Blues / Blues Rock</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="Gospel"><span>Gospel</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="Reggae"><span>Reggae</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="Musical / Broadway"><span>Musical / Broadway</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="80s"><span>80s</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="90s"><span>90s</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="2000s"><span>2000s</span></label>
+          <label class="chip"><input type="checkbox" name="style" value="Surprise me!"><span>Surprise me!</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="qlabel" id="energyLabel">What ENERGY should the song have? <span class="req">*</span><span class="hint">Pick one or more.</span></span>
+        <div class="chips" role="group" aria-labelledby="energyLabel" id="energyGroup">
+          <label class="chip"><input type="checkbox" name="energy" value="Funny &amp; ridiculous"><span>Funny &amp; ridiculous</span></label>
+          <label class="chip"><input type="checkbox" name="energy" value="Hype / party"><span>Hype / party</span></label>
+          <label class="chip"><input type="checkbox" name="energy" value="Cool &amp; confident"><span>Cool &amp; confident</span></label>
+          <label class="chip"><input type="checkbox" name="energy" value="Upbeat &amp; fun"><span>Upbeat &amp; fun</span></label>
+          <label class="chip"><input type="checkbox" name="energy" value="Heartfelt"><span>Heartfelt</span></label>
+          <label class="chip"><input type="checkbox" name="energy" value="Powerful / motivational"><span>Powerful / motivational</span></label>
+          <label class="chip"><input type="checkbox" name="energy" value="Relaxed / chill"><span>Relaxed / chill</span></label>
+          <label class="chip"><input type="checkbox" name="energy" value="Storytelling"><span>Storytelling</span></label>
+          <label class="chip"><input type="checkbox" name="energy" value="A little bit of everything"><span>A little bit of everything</span></label>
+          <label class="chip"><input type="checkbox" name="energy" value="Surprise me"><span>Surprise me</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="qlabel" id="singerLabel">Male or female lead singer? <span class="req">*</span></span>
+        <div class="chips" role="radiogroup" aria-labelledby="singerLabel">
+          <label class="chip"><input type="radio" name="singer" value="Male" required><span>Male</span></label>
+          <label class="chip"><input type="radio" name="singer" value="Female"><span>Female</span></label>
+          <label class="chip"><input type="radio" name="singer" value="Either / Surprise me"><span>Either / Surprise me</span></label>
+        </div>
+      </div>
+
+      <div class="field"><label for="artists">Name 1–3 artists, bands, or songs <span class="pr" data-them="they" data-me="you">they</span> really like <span class="hint">This shows me the musical direction. I won't copy anyone.</span></label><input type="text" id="artists" name="artists"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Final details</legend>
+      <div class="field"><label for="mustMention">Anything you DEFINITELY want in the song?</label><textarea id="mustMention" name="mustMention" style="min-height:80px"></textarea></div>
+      <div class="field"><label for="avoid">Anything to keep OUT? <span class="hint">Touchy subjects, exes, anything off-limits.</span></label><textarea id="avoid" name="avoid" style="min-height:80px"></textarea></div>
+
+      <div class="field">
+        <span class="qlabel" id="freedomLabel">How much freedom do I have? <span class="req">*</span></span>
+        <div class="chips stack" role="radiogroup" aria-labelledby="freedomLabel">
+          <label class="chip"><input type="radio" name="freedom" value="Play it safe — Keep it nice and normal" required><span>Play it safe: keep it nice and normal</span></label>
+          <label class="chip"><input type="radio" name="freedom" value="Have some fun — You can tease a little"><span>Have some fun: you can tease a little</span></label>
+          <label class="chip"><input type="radio" name="freedom" value="Go for it! — Make it the WORST (in the best way)"><span>Go for it! Make it the WORST (in the best way)</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="qlabel" id="shareLabel">Can I post it on worstsong.com? <span class="req">*</span></span>
+        <div class="chips" role="radiogroup" aria-labelledby="shareLabel">
+          <label class="chip"><input type="radio" name="sharing" value="Yes, post it" required><span>Yes, post it!</span></label>
+          <label class="chip"><input type="radio" name="sharing" value="Keep it private"><span>Keep it private</span></label>
+        </div>
+        <span class="hint">Only first names ever go on the site.</span>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Your contact info</legend>
+      <div class="row">
+        <div class="field"><label for="yourName">Your name <span class="req">*</span></label><input type="text" id="yourName" name="yourName" required autocomplete="name"></div>
+        <div class="field"><label for="email">Email <span class="req">*</span><span class="hint">Your song gets sent here.</span></label><input type="email" id="email" name="email" required autocomplete="email"></div>
+      </div>
+      <div class="field"><label for="phone">Phone <span class="hint">Optional, for quick questions.</span></label><input type="tel" id="phone" name="phone" autocomplete="tel"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>The fine print</legend>
+      <ul class="terms">
+        <li>Each song is $20, paid on <a href="https://venmo.com/u/AlanDopp" target="_blank" rel="noopener">Venmo (@AlanDopp)</a> after you submit.</li>
+        <li>Worst Song keeps all rights to every song. You get the song to enjoy and share with friends and family.</li>
+      </ul>
+      <label class="check"><input type="checkbox" id="agree" name="agree" value="Agreed" required><span>I understand the price and that Worst Song keeps all rights to the song. <span class="req">*</span></span></label>
+    </fieldset>
+
+    <button type="submit" id="submitBtn">Send my request</button>
+    <p class="error" id="formError" role="alert"></p>
+  </form>
+
+  <section class="done" id="done" aria-live="polite">
+    <h2>Got it!</h2>
+    <p>Your song request is in. Last step: send <strong>$20</strong> on Venmo. The note is already filled in so I can match it up.</p>
+    <p><a class="paybtn" id="payBtn" href="https://venmo.com/AlanDopp?txn=pay&amp;amount=20&amp;note=Worst%20Song" target="_blank" rel="noopener">Pay $20 on Venmo</a></p>
+    <p><a href="https://worstsong.com">Back to the worst songs ever</a></p>
+  </section>
+
+  <footer>Questions? <a href="mailto:hello@worstsong.com">hello@worstsong.com</a></footer>
+</main>
+
+<script>
+  // Paste your Google Apps Script web app URL here (see setup steps).
+  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxRassRE0RXEuExp63G8zzIeVoB_TMNDqQpXVOcUdESxlj6fTgh8oWnzc2w69g7TFBIlA/exec';
+
+  const form = document.getElementById('songForm');
+  const err = document.getElementById('formError');
+  const btn = document.getElementById('submitBtn');
+
+  document.getElementById('neededBy').min = new Date().toISOString().slice(0, 10);
+
+  // Swap "them/their" for "you/your" when the song is for the person filling it out
+  function setPronouns() {
+    const me = form.songFor.value === 'Me';
+    document.querySelectorAll('.pr').forEach(el => { el.textContent = me ? el.dataset.me : el.dataset.them; });
+  }
+  form.querySelectorAll('input[name=songFor]').forEach(r => r.addEventListener('change', setPronouns));
+
+  const picked = name => form.querySelectorAll('input[name=' + name + ']:checked').length;
+  const countEl = document.getElementById('describeCount');
+  form.querySelectorAll('input[name=describe]').forEach(c => c.addEventListener('change', () => {
+    const n = picked('describe');
+    countEl.textContent = n + ' picked' + (n < 3 ? ' (pick at least 3)' : ' ✓');
+  }));
+
+  function fail(msg, el) {
+    err.textContent = msg;
+    if (el) el.focus();
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    err.textContent = '';
+    if (form.website.value) return; // bot
+    if (picked('describe') < 3) return fail('Pick at least 3 things that describe them.', form.querySelector('input[name=describe]'));
+    if (picked('style') < 1) return fail('Pick at least one music style.', form.querySelector('input[name=style]'));
+    if (picked('energy') < 1) return fail('Pick at least one energy.', form.querySelector('input[name=energy]'));
+    if (!form.checkValidity()) return fail('Please fill in everything marked with a *.', form.querySelector(':invalid'));
+    if (SHEET_URL.startsWith('PASTE')) return fail('This form is not connected yet. (Owner: add your Apps Script URL.)');
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      const data = new URLSearchParams();
+      const fd = new FormData(form);
+      fd.delete('website');
+      // Join multi-picks into one cell, e.g. "Pop, Country"
+      for (const key of new Set(fd.keys())) data.set(key, fd.getAll(key).join(', '));
+      await fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', body: data });
+
+      const name = (form.nickname.value || form.honoree.value).trim();
+      document.getElementById('payBtn').href =
+        'https://venmo.com/AlanDopp?txn=pay&amount=20&note=' + encodeURIComponent('Worst Song for ' + name);
+      form.style.display = 'none';
+      document.getElementById('done').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (x) {
+      fail('Something went wrong sending your request. Please try again, or email hello@worstsong.com.');
+      btn.disabled = false;
+      btn.textContent = 'Send my request';
+    }
+  });
+</script>
+</body>
+</html>
