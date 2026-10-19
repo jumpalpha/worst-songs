@@ -28,7 +28,7 @@ First names only. Never number them or put them in data/songs.json.
   4. python3 build.py, then commit and push.
   5. Add its counter row in Supabase once (prefix "c-"):
        insert into public.songs (slug, title) values ('c-jen-birthday-2026', 'Title');
-     Visitors rate custom songs 1-10 (public.rate / public.custom_stats); the score shows
+     Visitors rate custom songs 1-10 and can pick up to 3 items (public.rate_v2 / public.custom_stats_v2); the score shows
      as a mix of silly items (assets/custom.js).
 """
 import html, json, os, re

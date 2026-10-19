@@ -76,7 +76,7 @@
 
   function stats() {
     if (!cfg.url) return Promise.resolve({});
-    return fetch(cfg.url + "/rest/v1/rpc/custom_stats", { method: "POST", headers: H, body: "{}" })
+    return fetch(cfg.url + "/rest/v1/rpc/custom_stats_v2", { method: "POST", headers: H, body: "{}" })
       .then(function (r) { return r.ok ? r.json() : []; })
       .then(function (rows) { var o = {}; rows.forEach(function (r) { o[r.slug] = r; }); return o; })
       .catch(function () { return {}; });
@@ -285,7 +285,7 @@
     btn.addEventListener("click", function () {
       btn.disabled = true;
       var items = picked.map(function (p) { return { i: p.i, n: p.n }; });
-      fetch(cfg.url + "/rest/v1/rpc/rate", {
+      fetch(cfg.url + "/rest/v1/rpc/rate_v2", {
         method: "POST", headers: H,
         body: JSON.stringify({ p_slug: slug, p_voter: voterId(), p_score: score(), p_items: items.length ? items : null })
       }).then(function (r) { if (!r.ok) throw 0; return r.json(); })
