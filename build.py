@@ -172,11 +172,15 @@ def index_page():
     <h1>WORST SONG<br>EVER</h1>
     <p>Intentionally terrible songs. Genuinely catchy. You've been warned.</p>
     <div class="counts big"><span>&#128064; <b data-total-visits>&ndash;</b> visits</span><span>&#127911; <b data-total-plays>&ndash;</b> plays</span><span>{len(songs)} songs</span></div>
-    <div class="reqrow"><a class="reqbtn" href="{PATH}/request/">Want your own song? <b>$5</b> &rarr;</a><a class="reqlink" href="{PATH}/custom/">Hear custom songs</a></div>
+    <div class="reqrow"><a class="reqbtn" href="{PATH}/custom/">&#127925; Hear custom songs &rarr;</a><a class="reqsmall" href="{PATH}/request/">or get one made for you ($5)</a></div>
   </section>
-  <section class="board" hidden>
-    <h2>Most Played <span>(the worst of the worst)</span></h2>
-    <ol data-board></ol>
+  <section class="boards" hidden>
+    <h2>The Charts <span>(the worst of the worst)</span></h2>
+    <div class="boardrow">
+      <div class="board" data-board="ever"></div>
+      <div class="board" data-board="week"></div>
+      <div class="board" data-board="daily"></div>
+    </div>
   </section>
   <section>
     <h2>Every Song</h2>

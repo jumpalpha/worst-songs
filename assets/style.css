@@ -153,3 +153,25 @@ audio { width: 100%; margin-bottom: 14px; }
 .rate .reqbtn:disabled { opacity: .6; cursor: wait; }
 .rmsg { margin: 10px 0 0; color: var(--gold); min-height: 1.4em; }
 .scorehelp { color: var(--dim); font-size: 14px; margin-top: 18px; }
+
+/* Home charts: three swappable lists */
+.boardrow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.boards .board { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px; }
+.bhead select {
+  width: 100%; min-height: 44px; font: 400 22px Anton, Impact, sans-serif; letter-spacing: .02em;
+  color: var(--gold); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 0 10px; cursor: pointer;
+}
+.bnote { color: var(--dim); font-size: 12px; margin: 6px 2px 0; }
+.boards ol { margin-top: 10px; gap: 6px; }
+.boards li a { background: var(--bg); padding: 8px 10px; gap: 10px; }
+.boards .rank { font-size: 22px; }
+.boards .bp { font-size: 13px; }
+.bempty { color: var(--dim); font-size: 14px; margin: 14px 4px 4px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+@media (max-width: 860px) {
+  .boardrow { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 86%;
+    overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; }
+  .boards .board { scroll-snap-align: start; }
+}
+.reqsmall { color: var(--dim); font-size: 14px; }
+.reqsmall:hover { color: var(--ink); }
