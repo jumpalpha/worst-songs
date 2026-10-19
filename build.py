@@ -319,10 +319,16 @@ def custom_page(c):
   <section class="rate" data-rate="c-{c['slug']}">
     <h2>Song Score</h2>
     <p class="cur" data-current>Loading&hellip;</p>
+    <h3 class="rstep">1. Your score</h3>
     <label class="rlabel" for="rate-range">How stuck in your head is it? <b data-num>5</b>/10</label>
     <input id="rate-range" type="range" min="1" max="10" step="1" value="5">
+    <h3 class="rstep">2. Pick your pile <span>(optional)</span></h3>
+    <div class="mine" data-mine></div>
+    <div class="ichips" data-chips role="group" aria-label="Pick up to 3 items"></div>
+    <button type="button" class="shuf" data-shuffle>&#128256; Show other items</button>
+    <div class="pile" data-pile aria-hidden="true"></div>
     <p class="preview">That's <span data-preview></span>.</p>
-    <button type="button" class="reqbtn">Rate it</button>
+    <button type="button" class="reqbtn" data-submit>Rate it</button>
     <p class="rmsg" data-msg aria-live="polite"></p>
   </section>
   {f'<section class="lyrics"><h2>Lyrics</h2>{lyr}</section>' if lyr else ''}

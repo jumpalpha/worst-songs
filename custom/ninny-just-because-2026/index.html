@@ -15,10 +15,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css?v=381d5902">
+<link rel="stylesheet" href="/assets/style.css?v=dae9d020">
 <script>window.WSE={url:"https://vvjgriwldvnqnlgzvnvs.supabase.co",key:"sb_publishable_wns9aERfjHvFgMla8vB6Lw_shmufhsx"};</script>
 <script src="/assets/stats.js?v=4aba5700" defer></script>
-<script src="/assets/custom.js?v=ec692435" defer></script>
+<script src="/assets/custom.js?v=f2378df8" defer></script>
 </head>
 <body class="song" data-slug="c-ninny-just-because-2026">
 <header class="bar"><a class="brand" href="/custom/">CUSTOM SONGS</a></header>
@@ -38,10 +38,16 @@
   <section class="rate" data-rate="c-ninny-just-because-2026">
     <h2>Song Score</h2>
     <p class="cur" data-current>Loading&hellip;</p>
+    <h3 class="rstep">1. Your score</h3>
     <label class="rlabel" for="rate-range">How stuck in your head is it? <b data-num>5</b>/10</label>
     <input id="rate-range" type="range" min="1" max="10" step="1" value="5">
+    <h3 class="rstep">2. Pick your pile <span>(optional)</span></h3>
+    <div class="mine" data-mine></div>
+    <div class="ichips" data-chips role="group" aria-label="Pick up to 3 items"></div>
+    <button type="button" class="shuf" data-shuffle>&#128256; Show other items</button>
+    <div class="pile" data-pile aria-hidden="true"></div>
     <p class="preview">That's <span data-preview></span>.</p>
-    <button type="button" class="reqbtn">Rate it</button>
+    <button type="button" class="reqbtn" data-submit>Rate it</button>
     <p class="rmsg" data-msg aria-live="polite"></p>
   </section>
   <section class="lyrics"><h2>Lyrics</h2><h3>Intro / Hook</h3>

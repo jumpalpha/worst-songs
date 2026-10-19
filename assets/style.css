@@ -175,3 +175,28 @@ audio { width: 100%; margin-bottom: 14px; }
 }
 .reqsmall { color: var(--dim); font-size: 14px; }
 .reqsmall:hover { color: var(--ink); }
+
+/* Custom song rating: pick your own items */
+.rstep { font: 800 13px Inter, sans-serif; text-transform: uppercase; letter-spacing: .08em; color: var(--gold); margin: 18px 0 8px; }
+.rstep span { color: var(--dim); text-transform: none; letter-spacing: 0; font-weight: 400; }
+.ichips { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.ichip { display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 10px; text-align: left;
+  font: 600 13px Inter, sans-serif; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 12px; cursor: pointer;
+  transition: transform .1s, border-color .1s; }
+.ichip:active { transform: scale(.95); }
+.ichip.on { border-color: var(--gold); background: #2c2414; }
+.ie { font-size: 22px; line-height: 1; }
+.shuf { margin-top: 10px; font: 600 14px Inter, sans-serif; color: var(--gold); background: none; border: 0; padding: 8px 0; cursor: pointer; min-height: 44px; }
+.mine { display: grid; gap: 8px; margin-bottom: 12px; }
+.mhint { color: var(--dim); font-size: 14px; margin: 0; }
+.mrow { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 12px; background: var(--bg); border: 1px solid var(--gold); }
+.mname { flex: 1; font-weight: 700; }
+.step, .mx { width: 40px; height: 40px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); font: 800 20px Inter, sans-serif; cursor: pointer; }
+.mx { border: 0; background: none; color: var(--dim); }
+.mn { min-width: 1.4em; text-align: center; font-size: 18px; font-variant-numeric: tabular-nums; }
+.pile { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 16px 0 0; min-height: 34px; font-size: 26px; line-height: 1.2; }
+.pile.big { font-size: 32px; margin: 0 0 6px; }
+.pg { display: inline-flex; }
+.pe { display: inline-block; animation: pop .25s ease-out; }
+@keyframes pop { from { transform: scale(.3); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .pe { animation: none; } }
