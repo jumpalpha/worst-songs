@@ -40,6 +40,7 @@
   .chip input{position:absolute;opacity:0;width:1px;height:1px}
   .chip span{display:inline-flex;align-items:center;min-height:44px;padding:8px 16px;border:2px solid #8A8A84;border-radius:999px;cursor:pointer;font-weight:500}
   .chip input:checked + span{background:var(--accent);border-color:var(--accent);color:var(--ink);font-weight:700}
+  .chip input:disabled + span{opacity:.35;cursor:not-allowed}
   .chip input:focus-visible + span{outline:2px solid var(--accent);outline-offset:3px}
   .stack .chip span{width:100%;border-radius:12px}
   .stack{flex-direction:column}
@@ -92,6 +93,7 @@
           <label class="chip"><input type="radio" name="occasion" value="Other"><span>Other</span></label>
         </div>
       </div>
+      <div class="field"><label for="milestone">Any milestone or number? <span class="hint">Turning 40, 25 years married, Class of 2027, 30 years at the plant…</span></label><input type="text" id="milestone" name="milestone"></div>
       <div class="field"><label for="neededBy">Need it by <span class="req">*</span><span class="hint">Tap to pick a date from the calendar.</span></label><input type="date" id="neededBy" name="neededBy" required></div>
     </fieldset>
 
@@ -99,10 +101,20 @@
       <legend>About <span class="pr" data-them="them" data-me="you">them</span></legend>
       <div class="field"><label for="honoree"><span class="pr" data-them="Their" data-me="Your">Their</span> name <span class="req">*</span></label><input type="text" id="honoree" name="honoree" required></div>
       <div class="field"><label for="nickname">What do people usually call <span class="pr" data-them="them" data-me="you">them</span>? <span class="hint">This is what goes in the song. Example: Coach, Jen, Grandpa Joe, Smitty.</span></label><input type="text" id="nickname" name="nickname"></div>
+      <div class="field"><label for="pronounce">How do you say the name? <span class="hint">Only if it's tricky. Example: Siobhan = "shi-VAWN", Nguyen = "win".</span></label><input type="text" id="pronounce" name="pronounce"></div>
+      <div class="field" id="relField"><label for="relationship">How do you know them? <span class="req">*</span><span class="hint">My wife, my dad, my best friend since 3rd grade, my coach…</span></label><input type="text" id="relationship" name="relationship" required></div>
       <div class="field"><label for="whatTheyDo">What <span class="pr" data-them="do they" data-me="do you">do they</span> do? <span class="req">*</span><span class="hint">Job, school, sport, "professional napper"… anything.</span></label><input type="text" id="whatTheyDo" name="whatTheyDo" required></div>
 
+
+      <div class="field"><label for="story">Tell me a story about <span class="pr" data-them="them" data-me="you">them</span> <span class="req">*</span><span class="hint">One specific moment: a road trip, an epic fail, the time they… This is where verses come from. A few sentences is perfect.</span></label><textarea id="story" name="story" required style="min-height:120px"></textarea></div>
+      <div class="field"><label for="sayings">Something <span class="pr" data-them="they" data-me="you">they</span> always say <span class="hint">Their exact words. A catchphrase, a dad joke, a saying. These make great hooks.</span></label><input type="text" id="sayings" name="sayings"></div>
+      <div class="field"><label for="happyPlace">What's <span class="pr" data-them="their" data-me="your">their</span> HAPPY PLACE? <span class="hint">Mountains, beach, backyard, ball field, couch, Costco 😂</span></label><input type="text" id="happyPlace" name="happyPlace"></div>
+      <div class="field"><label for="people">Family, friends, or pets to mention <span class="hint">Names + relationships are plenty. First names only, please.</span></label><textarea id="people" name="people"></textarea></div>
+      <div class="field"><label for="knownFor">What <span class="pr" data-them="are they" data-me="are you">are they</span> known for? <span class="hint">A talent, obsession, funny habit, signature move…</span></label><input type="text" id="knownFor" name="knownFor"></div>
+      <div class="field"><label for="funnyFact">Give me ONE funny or unusual fact <span class="req">*</span><span class="hint">This is usually where the best lyrics come from.</span></label><textarea id="funnyFact" name="funnyFact" required></textarea></div>
+
       <div class="field">
-        <span class="qlabel" id="descLabel">Pick a few things that describe <span class="pr" data-them="them" data-me="you">them</span> <span class="req">*</span><span class="hint">At least 3. More is better.</span></span>
+        <span class="qlabel" id="descLabel">Pick up to 3 things <span class="pr" data-them="they're" data-me="you're">they're</span> into <span class="hint">Optional. The stories above matter way more.</span></span>
         <div class="chips" role="group" aria-labelledby="descLabel" id="describeGroup">
           <label class="chip"><input type="checkbox" name="describe" value="Family"><span>Family</span></label>
           <label class="chip"><input type="checkbox" name="describe" value="Friends"><span>Friends</span></label>
@@ -131,19 +143,14 @@
           <label class="chip"><input type="checkbox" name="describe" value="Church / Faith"><span>Church / Faith</span></label>
           <label class="chip"><input type="checkbox" name="describe" value="Other"><span>Other</span></label>
         </div>
-        <div class="count" id="describeCount" aria-live="polite">0 picked</div>
+        <div class="count" id="describeCount" aria-live="polite">0 of 3 picked</div>
       </div>
-
-      <div class="field"><label for="happyPlace">What's <span class="pr" data-them="their" data-me="your">their</span> HAPPY PLACE? <span class="hint">Mountains, beach, backyard, ball field, couch, Costco 😂</span></label><input type="text" id="happyPlace" name="happyPlace"></div>
-      <div class="field"><label for="people">Family, friends, or pets to mention <span class="hint">Names + relationships are plenty. First names only, please.</span></label><textarea id="people" name="people"></textarea></div>
-      <div class="field"><label for="knownFor">What <span class="pr" data-them="are they" data-me="are you">are they</span> known for? <span class="hint">A saying, talent, obsession, funny habit, famous fail…</span></label><input type="text" id="knownFor" name="knownFor"></div>
-      <div class="field"><label for="funnyFact">Give me ONE funny or unusual fact <span class="req">*</span><span class="hint">This is usually where the best lyrics come from.</span></label><textarea id="funnyFact" name="funnyFact" required></textarea></div>
     </fieldset>
 
     <fieldset>
       <legend>The sound</legend>
       <div class="field">
-        <span class="qlabel" id="styleLabel">Pick a music style <span class="req">*</span><span class="hint">Pick one or more.</span></span>
+        <span class="qlabel" id="styleLabel">Pick a music style <span class="req">*</span><span class="hint">Pick 1. A 2nd is okay if you can't decide, but 1 makes a better song.</span></span>
         <div class="chips" role="group" aria-labelledby="styleLabel" id="styleGroup">
           <label class="chip"><input type="checkbox" name="style" value="Pop"><span>Pop</span></label>
           <label class="chip"><input type="checkbox" name="style" value="Hip-Hop / Rap"><span>Hip-Hop / Rap</span></label>
@@ -168,7 +175,7 @@
       </div>
 
       <div class="field">
-        <span class="qlabel" id="energyLabel">What ENERGY should the song have? <span class="req">*</span><span class="hint">Pick one or more.</span></span>
+        <span class="qlabel" id="energyLabel">What ENERGY should the song have? <span class="req">*</span><span class="hint">Pick 1 or 2.</span></span>
         <div class="chips" role="group" aria-labelledby="energyLabel" id="energyGroup">
           <label class="chip"><input type="checkbox" name="energy" value="Funny &amp; ridiculous"><span>Funny &amp; ridiculous</span></label>
           <label class="chip"><input type="checkbox" name="energy" value="Hype / party"><span>Hype / party</span></label>
@@ -197,6 +204,7 @@
 
     <fieldset>
       <legend>Final details</legend>
+      <div class="field"><label for="feeling">What should <span class="pr" data-them="they" data-me="you">they</span> feel when <span class="pr" data-them="they hear" data-me="you hear">they hear</span> it? <span class="hint">Or: if the song could say ONE thing to <span class="pr" data-them="them" data-me="you">them</span>, what is it? Example: "We're proud of you", "You're the funniest person I know."</span></label><textarea id="feeling" name="feeling" style="min-height:80px"></textarea></div>
       <div class="field"><label for="mustMention">Anything you DEFINITELY want in the song?</label><textarea id="mustMention" name="mustMention" style="min-height:80px"></textarea></div>
 
       <div class="field">
@@ -268,15 +276,27 @@
   function setPronouns() {
     const me = form.songFor.value === 'Me';
     document.querySelectorAll('.pr').forEach(el => { el.textContent = me ? el.dataset.me : el.dataset.them; });
+    const rel = document.getElementById('relationship');
+    document.getElementById('relField').style.display = me ? 'none' : '';
+    rel.required = !me;
+    if (me) rel.value = '';
   }
   form.querySelectorAll('input[name=songFor]').forEach(r => r.addEventListener('change', setPronouns));
 
   const picked = name => form.querySelectorAll('input[name=' + name + ']:checked').length;
   const countEl = document.getElementById('describeCount');
-  form.querySelectorAll('input[name=describe]').forEach(c => c.addEventListener('change', () => {
-    const n = picked('describe');
-    countEl.textContent = n + ' picked' + (n < 3 ? ' (pick at least 3)' : ' ✓');
-  }));
+  // Cap how many chips can be picked in a group
+  function capGroup(name, max, onChange) {
+    const boxes = form.querySelectorAll('input[name=' + name + ']');
+    boxes.forEach(c => c.addEventListener('change', () => {
+      const n = picked(name);
+      boxes.forEach(b => { if (!b.checked) b.disabled = n >= max; });
+      if (onChange) onChange(n);
+    }));
+  }
+  capGroup('describe', 3, n => { countEl.textContent = n + ' of 3 picked'; });
+  capGroup('style', 2);
+  capGroup('energy', 2);
 
   function fail(msg, el) {
     err.textContent = msg;
@@ -289,7 +309,6 @@
     if (form.website.value) return; // bot
     // Treat answers that are only spaces as blank
     form.querySelectorAll('input[type=text], input[type=email], input[type=tel], textarea').forEach(el => { el.value = el.value.trim(); });
-    if (picked('describe') < 3) return fail('Pick at least 3 things that describe them.', form.querySelector('input[name=describe]'));
     if (picked('style') < 1) return fail('Pick at least one music style.', form.querySelector('input[name=style]'));
     if (picked('energy') < 1) return fail('Pick at least one energy.', form.querySelector('input[name=energy]'));
     if (!form.checkValidity()) return fail('Please fill in everything marked with a *.', form.querySelector(':invalid'));
