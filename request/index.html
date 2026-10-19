@@ -67,7 +67,7 @@
   <p class="kicker">Custom songs · worstsong.com</p>
   <h1>Let me make <span>you a song</span></h1>
   <p class="lead">Give me a couple minutes of info and I'll turn it into a song. Don't overthink it. Quick answers are perfect.</p>
-  <div class="price"><b>$20</b> per song</div>
+  <div class="price"><b>$5</b> per song</div>
 
   <form id="songForm" novalidate>
     <div class="hp" aria-hidden="true"><label for="website">Leave blank</label><input type="text" id="website" name="website" tabindex="-1" autocomplete="off"></div>
@@ -238,7 +238,7 @@
     <fieldset>
       <legend>The fine print</legend>
       <ul class="terms">
-        <li>Each song is $20, paid on <a href="https://venmo.com/u/AlanDopp" target="_blank" rel="noopener">Venmo (@AlanDopp)</a> after you submit.</li>
+        <li>Each song is $5, paid on <a href="https://venmo.com/u/AlanDopp" target="_blank" rel="noopener">Venmo (@AlanDopp)</a> after you submit.</li>
         <li>Worst Song keeps all rights to every song. You get the song to enjoy and share with friends and family.</li>
         <li>Love it? After you hear it, you can buy the full rights to your song for <strong>$150</strong>. Just email <a href="mailto:hello@worstsong.com">hello@worstsong.com</a>.</li>
       </ul>
@@ -252,9 +252,9 @@
 
   <section class="done" id="done" aria-live="polite">
     <h2>Got it!</h2>
-    <p id="payMsg">Your song request is in. Last step: send <strong>$20</strong> on Venmo. The note is already filled in so I can match it up.</p>
+    <p id="payMsg">Your song request is in. Last step: send <strong>$5</strong> on Venmo. The note is already filled in so I can match it up.</p>
     <p id="promoMsg" style="display:none">You used promo code <strong id="promoShown"></strong>. If it checks out, <strong>you don't need to pay</strong>. I'll email you if there's a problem with it.</p>
-    <p><a class="paybtn" id="payBtn" href="https://venmo.com/AlanDopp?txn=pay&amp;amount=20&amp;note=Worst%20Song" target="_blank" rel="noopener">Pay $20 on Venmo</a></p>
+    <p><a class="paybtn" id="payBtn" href="https://venmo.com/AlanDopp?txn=pay&amp;amount=5&amp;note=Worst%20Song" target="_blank" rel="noopener">Pay $5 on Venmo</a></p>
     <p><a href="https://worstsong.com">Back to the worst songs ever</a></p>
   </section>
 
@@ -329,7 +329,7 @@
 
       const name = (form.nickname.value || form.honoree.value).trim();
       document.getElementById('payBtn').href =
-        'https://venmo.com/AlanDopp?txn=pay&amount=20&note=' + encodeURIComponent('Worst Song for ' + name);
+        'https://venmo.com/AlanDopp?txn=pay&amount=5&note=' + encodeURIComponent('Worst Song for ' + name);
       const code = form.promo.value.trim().toUpperCase();
       if (code) {
         document.getElementById('promoShown').textContent = code;

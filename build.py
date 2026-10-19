@@ -172,7 +172,7 @@ def index_page():
     <h1>WORST SONG<br>EVER</h1>
     <p>Intentionally terrible songs. Genuinely catchy. You've been warned.</p>
     <div class="counts big"><span>&#128064; <b data-total-visits>&ndash;</b> visits</span><span>&#127911; <b data-total-plays>&ndash;</b> plays</span><span>{len(songs)} songs</span></div>
-    <div class="reqrow"><a class="reqbtn" href="{PATH}/request/">Want your own song? <b>$20</b> &rarr;</a><a class="reqlink" href="{PATH}/custom/">Hear custom songs</a></div>
+    <div class="reqrow"><a class="reqbtn" href="{PATH}/request/">Want your own song? <b>$5</b> &rarr;</a><a class="reqlink" href="{PATH}/custom/">Hear custom songs</a></div>
   </section>
   <section class="board" hidden>
     <h2>Most Played <span>(the worst of the worst)</span></h2>
@@ -322,7 +322,7 @@ def custom_page(c):
     <p class="rmsg" data-msg aria-live="polite"></p>
   </section>
   {f'<section class="lyrics"><h2>Lyrics</h2>{lyr}</section>' if lyr else ''}
-  <section class="ctaband"><h2>Want one like this?</h2><a class="reqbtn" href="{PATH}/request/">Request your song <b>$20</b> &rarr;</a></section>
+  <section class="ctaband"><h2>Want one like this?</h2><a class="reqbtn" href="{PATH}/request/">Request your song <b>$5</b> &rarr;</a></section>
   <nav class="pager"><a href="{CUSTOM_PATH}/">All custom songs</a><a href="{PATH}/">Worst Song Ever</a></nav>
 </main>
 <footer class="foot">Made on purpose. &copy; Worst Song Ever</footer>
@@ -355,7 +355,7 @@ def custom_index():
   <section class="intro">
     <h1>CUSTOM<br>SONGS</h1>
     <p>Made to order for birthdays, weddings, anniversaries, and just because.</p>
-    <a class="reqbtn" href="{PATH}/request/">Want your own song? <b>$20</b> &rarr;</a>
+    <a class="reqbtn" href="{PATH}/request/">Want your own song? <b>$5</b> &rarr;</a>
   </section>
   <section>
     {body}
