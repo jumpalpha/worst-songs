@@ -51,6 +51,7 @@ def ver(rel):
 
 
 CSSV, JSV, CJSV = ver("assets/style.css"), ver("assets/stats.js"), ver("assets/custom.js")
+PJSV = ver("assets/player.js")
 
 
 def mmss(sec):
@@ -126,14 +127,17 @@ def song_page(s, prev_s, next_s):
     n = s["n"]
     full = f"Worst Song Ever #{n} - {s['title']}"
     lyr = open(os.path.join(ROOT, "data", "lyrics", f"{n}.txt"), encoding="utf-8").read()
-    nav = []
-    if next_s:
-        nav.append(f'<a href="{PATH}/{next_s["n"]}/">&larr; #{next_s["n"]}</a>')
-    nav.append(f'<a href="{PATH}/">All songs</a>')
-    if prev_s:
-        nav.append(f'<a href="{PATH}/{prev_s["n"]}/">#{prev_s["n"]} &rarr;</a>')
+    order = json.dumps([[x["n"], x["title"]] for x in sorted(songs, key=lambda x: x["n"])], ensure_ascii=False)
+    nav = (f'<a href="{PATH}/{prev_s["n"]}/" data-go="{prev_s["n"]}">&larr; #{prev_s["n"]} {e(prev_s["title"])}</a>'
+           f'<a href="{PATH}/">All songs</a>'
+           f'<a href="{PATH}/{next_s["n"]}/" data-go="{next_s["n"]}">#{next_s["n"]} {e(next_s["title"])} &rarr;</a>')
+    songnav = (f'<div class="songnav"><a class="sn" href="{PATH}/{prev_s["n"]}/" data-go="{prev_s["n"]}" aria-label="Previous song, number {prev_s["n"]}">&#9664; #{prev_s["n"]}</a>'
+               f'<label class="auto"><input type="checkbox" data-auto checked> Auto-play next</label>'
+               f'<a class="sn" href="{PATH}/{next_s["n"]}/" data-go="{next_s["n"]}" aria-label="Next song, number {next_s["n"]}">#{next_s["n"]} &#9654;</a></div>'
+               f'<div class="upnext" data-upnext hidden></div>')
     return head(full, f"Listen to {full}. It's terrible. Rate it 1-10.",
-                f"{BASE}/{n}/", f"{BASE}/songs/{n}/cover.jpg") + f"""<body class="song" data-slug="{n}">
+                f"{BASE}/{n}/", f"{BASE}/songs/{n}/cover.jpg",
+                extra=f'<script>window.WSE_ORDER={order};window.WSE_PATH="{PATH}";</script>\n<script src="{PATH}/assets/player.js?v={PJSV}" defer></script>\n') + f"""<body class="song" data-slug="{n}">
 <header class="bar"><a class="brand" href="{PATH}/">WORST SONG EVER</a></header>
 <main class="wrap">
   <section class="hero">
@@ -142,6 +146,7 @@ def song_page(s, prev_s, next_s):
       <div class="badge">WORST SONG EVER <b>#{n}</b></div>
       <h1>{e(s['title'])}</h1>
       <audio id="player" controls preload="metadata" src="{PATH}/songs/{n}/audio.mp3"></audio>
+      {songnav}
       <div class="counts"><span>&#127911; <b data-plays>&ndash;</b> plays</span><span>&#128064; <b data-visits>&ndash;</b> visits</span><span>{mmss(s['duration'])}</span></div>
       <button class="share" type="button" data-share>Share this crime</button>
     </div>
@@ -175,7 +180,7 @@ def index_page():
     <h1>WORST SONG<br>EVER</h1>
     <p>Intentionally terrible songs. Genuinely catchy. You've been warned.</p>
     <div class="counts big"><span>&#128064; <b data-total-visits>&ndash;</b> visits</span><span>&#127911; <b data-total-plays>&ndash;</b> plays</span><span>{len(songs)} songs</span></div>
-    <div class="reqrow"><a class="reqbtn" href="{PATH}/custom/">&#127925; Hear custom songs &rarr;</a><a class="reqsmall" href="{PATH}/request/">or get one made for you ($5)</a></div>
+    <div class="reqrow"><a class="reqbtn playall" href="{PATH}/{min(s['n'] for s in songs)}/?playall=1">&#9654; Play them all, in order</a><a class="reqbtn" href="{PATH}/custom/">&#127925; Hear custom songs &rarr;</a></div>
   </section>
   <section class="boards" hidden>
     <h2>The Charts <span>(the worst of the worst)</span></h2>
@@ -388,8 +393,9 @@ for c in customs:
 write("friend-songs/index.html", friend_index())
 for f in friends:
     write(f"friend-songs/{f['slug']}/index.html", friend_page(f))
-for i, s in enumerate(songs):
-    nxt = songs[i - 1] if i > 0 else None          # newer
-    prv = songs[i + 1] if i + 1 < len(songs) else None  # older
+asc = sorted(songs, key=lambda x: x["n"])
+for i, s in enumerate(asc):
+    prv = asc[i - 1]                    # lower number (wraps to the newest)
+    nxt = asc[(i + 1) % len(asc)]       # higher number (wraps to #0)
     write(f"{s['n']}/index.html", song_page(s, prv, nxt))
 print(f"built {len(songs)} song pages, {len(customs)} custom song pages, {len(friends)} friend song pages")

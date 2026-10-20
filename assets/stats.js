@@ -9,7 +9,7 @@
 
   function bump(kind) {
     return fetch(cfg.url + "/rest/v1/rpc/bump", {
-      method: "POST", headers: H, body: JSON.stringify({ p_slug: slug, p_kind: kind })
+      method: "POST", headers: H, body: JSON.stringify({ p_slug: document.body.dataset.slug, p_kind: kind })
     }).then(function (r) { return r.ok ? r.json() : []; })
       .then(function (rows) {
         var row = rows && rows[0];
@@ -91,12 +91,15 @@
       bump("play");
     });
     if (player) player.addEventListener("ended", function () { counted = false; });
+    // player.js swaps songs in place: count a visit for the new song, and its next play
+    window.WSE_newSong = function () { counted = false; bump("visit"); };
     share();
   }
 
   function share() {
-    var btn = document.querySelector("[data-share]");
-    if (btn) btn.addEventListener("click", function () {
+    document.addEventListener("click", function (ev) {
+      var btn = ev.target.closest && ev.target.closest("[data-share]");
+      if (!btn) return;
       var data = { title: document.title, url: location.href };
       if (navigator.share) { navigator.share(data).catch(function () {}); return; }
       navigator.clipboard.writeText(location.href).then(function () {

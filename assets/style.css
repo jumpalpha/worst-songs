@@ -200,3 +200,22 @@ audio { width: 100%; margin-bottom: 14px; }
 .pe { display: inline-block; animation: pop .25s ease-out; }
 @keyframes pop { from { transform: scale(.3); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .pe { animation: none; } }
+
+/* Song-to-song controls (player.js) */
+.songnav { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 12px 0 14px; max-width: 420px; }
+.songnav .sn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 76px; padding: 0 14px;
+  border: 2px solid var(--gold); border-radius: 999px; color: var(--gold); font-weight: 800; text-decoration: none; }
+.songnav .sn:hover { background: var(--gold); color: #16121f; }
+.songnav .auto { display: inline-flex; align-items: center; gap: 8px; color: var(--dim); font-size: 14px; cursor: pointer; min-height: 44px; }
+.songnav .auto input { width: 20px; height: 20px; accent-color: var(--gold); }
+.upnext { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; background: var(--panel); border: 1px solid var(--gold);
+  border-radius: 14px; padding: 12px 14px; margin: 0 0 14px; max-width: 420px; }
+.upnext[hidden] { display: none; }
+.upnext .ut { flex: 1 1 180px; font-weight: 600; }
+.upnext .ut small { display: block; color: var(--dim); font-weight: 400; font-size: 13px; }
+.upnext button { font: inherit; font-weight: 800; min-height: 44px; padding: 0 16px; border-radius: 999px; cursor: pointer; border: 0; }
+.upnext .go { background: var(--gold); color: #16121f; }
+.upnext .stop { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.pager a { max-width: 40%; }
+.reqbtn.playall { background: var(--pink); color: #fff; }
+.reqbtn.playall:hover { background: #ff5aa2; }
