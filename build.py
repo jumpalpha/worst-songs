@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Builds the Worst Song Ever site from data/songs.json + data/lyrics/<n>.txt.
+"""Commit as: git -c user.name="Worst Song" -c user.email="hello@worstsong.com" commit ...
+(never a personal name/email; the repo is public)
+
+Builds the Worst Song Ever site from data/songs.json + data/lyrics/<n>.txt.
 
 Adding a song:
   1. songs/<n>/audio.mp3 and songs/<n>/cover.jpg
