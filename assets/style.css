@@ -219,3 +219,54 @@ audio { width: 100%; margin-bottom: 14px; }
 .pager a { max-width: 40%; }
 .reqbtn.playall { background: var(--pink); color: #fff; }
 .reqbtn.playall:hover { background: #ff5aa2; }
+
+/* Get the App (app.js) */
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.getapp { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border-radius: 999px;
+  background: var(--gold); color: #16121f; font-weight: 800; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.getapp:hover { background: #ffd666; }
+.is-app .getapp, .is-app [data-getapp], .is-app .notapp, .apppage .getapp { display: none !important; }
+.installed-note { display: none; margin: 4px 0 0; color: var(--gold); font-size: 18px; }
+.is-app .installed-note { display: block; }
+.apppitch { display: flex; align-items: center; gap: 14px; margin: 28px 0 0; padding: 14px 16px; text-decoration: none;
+  border-radius: 16px; border: 2px solid var(--gold); background: linear-gradient(120deg, #2c2414, var(--panel) 70%);
+  transition: transform .15s; }
+.apppitch:hover { transform: translateY(-2px); }
+.apppitch img { width: 64px; height: 64px; border-radius: 16px; flex: none; }
+.apppitch.slim { margin-top: 36px; }
+.apppitch.slim img { width: 48px; height: 48px; border-radius: 12px; }
+.apt { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.apt b { font-size: 17px; }
+.apt small { color: var(--dim); font-size: 14px; line-height: 1.35; }
+.apgo { flex: none; font-weight: 800; color: var(--gold); white-space: nowrap; }
+@media (max-width: 480px) { .apgo { display: none; } }
+
+.apphero { display: flex; align-items: center; gap: 28px; }
+.apphero h1 { font-size: clamp(44px, 9vw, 92px); }
+.appicon { width: 140px; height: 140px; border-radius: 32px; box-shadow: 0 12px 40px rgba(255, 197, 49, .25); flex: none; }
+@media (max-width: 640px) { .apphero { flex-direction: column; align-items: flex-start; gap: 18px; } .appicon { width: 96px; height: 96px; border-radius: 22px; } }
+.bigbtn { border: 0; cursor: pointer; font: inherit; font-weight: 800; font-size: 18px; min-height: 56px; padding: 0 28px; }
+.imsg { color: var(--gold); min-height: 1.4em; margin: 10px 0 0; }
+.perks { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+.perk { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+.perk .pi { font-size: 30px; display: block; margin-bottom: 6px; }
+.perk b { font-size: 17px; }
+.perk p { color: var(--dim); margin: 6px 0 0; font-size: 15px; }
+.howto details { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; margin: 0 0 10px; padding: 0 16px; }
+.howto summary { cursor: pointer; font-weight: 800; font-size: 17px; min-height: 52px; display: flex; align-items: center; }
+.howto ol { margin: 0 0 16px; padding-left: 22px; }
+.howto li { margin: 6px 0; }
+.faq p { max-width: 60ch; margin: 0 0 12px; }
+.faq b { color: var(--gold); }
+
+.appnudge { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 20; max-width: 520px; margin: 0 auto;
+  display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 14px; border-radius: 16px;
+  background: var(--panel); border: 2px solid var(--gold); box-shadow: 0 10px 40px rgba(0, 0, 0, .5); animation: up .3s ease-out; }
+.appnudge img { width: 48px; height: 48px; border-radius: 12px; flex: none; }
+.appnudge .nt { flex: 1; min-width: 0; line-height: 1.25; }
+.appnudge .nt small { display: block; color: var(--dim); font-size: 13px; line-height: 1.35; }
+.appnudge .go { flex: none; min-height: 44px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 999px;
+  background: var(--gold); color: #16121f; font-weight: 800; text-decoration: none; }
+.appnudge .x { flex: none; width: 40px; height: 44px; border: 0; background: none; color: var(--dim); font-size: 26px; cursor: pointer; }
+@keyframes up { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .appnudge { animation: none; } }

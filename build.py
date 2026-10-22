@@ -52,6 +52,7 @@ def ver(rel):
 
 CSSV, JSV, CJSV = ver("assets/style.css"), ver("assets/stats.js"), ver("assets/custom.js")
 PJSV = ver("assets/player.js")
+AJSV = ver("assets/app.js")
 
 
 def mmss(sec):
@@ -113,14 +114,29 @@ def head(title, desc, url, image, hidden=False, extra=""):
 <meta property="og:image" content="{image}">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="{PATH}/assets/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="{PATH}/manifest.webmanifest">
+<meta name="theme-color" content="#16121f">
+<link rel="apple-touch-icon" href="{PATH}/assets/app/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Worst Song">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{PATH}/assets/style.css?v={CSSV}">
 <script>window.WSE={{url:"{SITE['supabase_url']}",key:"{SITE['supabase_key']}"}};</script>
 <script src="{PATH}/assets/stats.js?v={JSV}" defer></script>
-{extra}</head>
+{extra}<script src="{PATH}/assets/app.js?v={AJSV}" defer></script>
+</head>
 """
+
+
+APP_BAND = f"""<a class="apppitch slim" href="{PATH}/app/" data-getapp>
+    <img src="{PATH}/assets/app/icon-192.png" alt="" width="48" height="48">
+    <span class="apt"><b>Take the worst everywhere</b><small>Free app, no app store. Skip songs from your lock screen.</small></span>
+    <span class="apgo">Get it &rarr;</span>
+  </a>"""
 
 
 def song_page(s, prev_s, next_s):
@@ -156,6 +172,7 @@ def song_page(s, prev_s, next_s):
     <h2>Lyrics</h2>
     {lyrics_html(lyr)}
   </section>
+  {APP_BAND}
   <nav class="pager">{''.join(nav)}</nav>
 </main>
 <footer class="foot">Made on purpose. &copy; Worst Song Ever</footer>
@@ -182,6 +199,11 @@ def index_page():
     <div class="counts big"><span>&#128064; <b data-total-visits>&ndash;</b> visits</span><span>&#127911; <b data-total-plays>&ndash;</b> plays</span><span>{len(songs)} songs</span></div>
     <div class="reqrow"><a class="reqbtn playall" href="{PATH}/{min(s['n'] for s in songs)}/?playall=1">&#9654; Play them all, in order</a><a class="reqbtn" href="{PATH}/custom/">&#127925; Hear custom songs &rarr;</a></div>
   </section>
+  <a class="apppitch" href="{PATH}/app/" data-getapp>
+    <img src="{PATH}/assets/app/icon-192.png" alt="" width="64" height="64">
+    <span class="apt"><b>Get the Worst Song Ever app</b><small>Free. No app store. 2 taps. Every terrible song, one tap from your home screen.</small></span>
+    <span class="apgo">Get it &rarr;</span>
+  </a>
   <section class="boards" hidden>
     <h2>The Charts <span>(the worst of the worst)</span></h2>
     <div class="boardrow">
@@ -204,7 +226,86 @@ def index_page():
 """
 
 
+GETAPP = f'</a><a class="getapp" href="{PATH}/app/" data-getapp>&#128242; Get the App</a></header>'
+
+
+def app_page():
+    n = len(songs)
+    perks = [
+        ("&#128073;", "One tap to the worst", "A yellow WORST SONG icon on your home screen. Tap it, you're in. No hunting through tabs."),
+        ("&#128241;", "Full screen, no browser junk", "Opens like a real app. No address bar, no tabs, just songs you'll regret."),
+        ("&#128274;", "Skip from your lock screen", "Cover art and previous / next buttons on your lock screen and headphones. Phone stays in your pocket."),
+        ("&#9654;&#65039;", "Play them all", "Auto-play rolls straight into the next song. Long-press the icon (Android) for a Play-all shortcut."),
+        ("&#10024;", "New songs show up on their own", "No updates to download. When a new crime drops, it's just there."),
+        ("&#128184;", "Free. Actually free.", "No account, no ads, no app store, no card. Takes up less room than one blurry photo."),
+    ]
+    cards = "\n".join(f'<div class="perk"><span class="pi">{i}</span><b>{t}</b><p>{d}</p></div>' for i, t, d in perks)
+    return head("Get the App · Worst Song Ever",
+                f"Put all {n} Worst Song Ever songs on your home screen. Free, no app store, 2 taps.",
+                f"{BASE}/app/", f"{BASE}/assets/brand/banner.png") + f"""<body class="home apppage" data-slug="">
+<header class="bar"><a class="brand" href="{PATH}/">WORST SONG EVER</a></header>
+<main class="wrap">
+  <section class="intro apphero">
+    <img class="appicon" src="{PATH}/assets/app/icon-512.png" alt="Worst Song Ever app icon" width="140" height="140">
+    <div>
+      <h1>PUT THE WORST<br>IN YOUR POCKET</h1>
+      <p>The Worst Song Ever app. All {n} songs, one tap away. Free, no app store, installs in about 2 taps.</p>
+      <div class="installed-note"><b>&#9989; You've got the app.</b> Go play something terrible.</div>
+      <div class="reqrow notapp">
+        <button type="button" class="reqbtn bigbtn" data-install>&#128242; Install the app &mdash; free</button>
+      </div>
+      <p class="imsg" data-install-msg aria-live="polite"></p>
+    </div>
+  </section>
+  <section>
+    <h2>Why you need this <span>(you don't, but still)</span></h2>
+    <div class="perks">
+{cards}
+    </div>
+  </section>
+  <section class="howto notapp">
+    <h2>How to install</h2>
+    <details id="ios"><summary>&#127822; iPhone / iPad</summary>
+      <ol>
+        <li>Open <b>worstsong.com</b> in <b>Safari</b> (newer iPhones: Chrome works too).</li>
+        <li>Tap the <b>Share</b> button (the square with the arrow up).</li>
+        <li>Scroll down and tap <b>Add to Home Screen</b>.</li>
+        <li>Tap <b>Add</b>. Done. Look for the yellow icon.</li>
+      </ol>
+    </details>
+    <details id="android"><summary>&#129302; Android</summary>
+      <ol>
+        <li>Open <b>worstsong.com</b> in <b>Chrome</b>.</li>
+        <li>Tap <b>Install the app</b> above, or the <b>&#8942;</b> menu &rarr; <b>Install app</b> (or <b>Add to Home screen</b>).</li>
+        <li>Tap <b>Install</b>. That's it.</li>
+      </ol>
+    </details>
+    <details id="desktop"><summary>&#128187; Computer</summary>
+      <ol>
+        <li>In <b>Chrome</b> or <b>Edge</b>, click the little install icon at the right end of the address bar.</li>
+        <li>Click <b>Install</b>. It opens in its own window, like a real app.</li>
+      </ol>
+    </details>
+  </section>
+  <section class="faq">
+    <h2>Questions nobody asked</h2>
+    <p><b>Is it really free?</b> Yes. No sign-up, no card, no ads.</p>
+    <p><b>Will it make my phone worse?</b> Only emotionally.</p>
+    <p><b>How do I delete it?</b> Long-press the icon and remove it, like any app. We'll pretend not to be hurt.</p>
+  </section>
+  <section class="ctaband">
+    <h2>Send it to the friend who deserves this</h2>
+    <button class="share" type="button" data-share>Share the app</button>
+  </section>
+</main>
+<footer class="foot">Made on purpose. &copy; Worst Song Ever</footer>
+</body>
+</html>
+"""
+
+
 def write(rel, text):
+    text = text.replace('</a></header>', GETAPP, 1)
     p = os.path.join(ROOT, rel)
     os.makedirs(os.path.dirname(p), exist_ok=True)
     open(p, "w", encoding="utf-8").write(text)
@@ -387,6 +488,7 @@ def custom_index():
 
 
 write("index.html", index_page())
+write("app/index.html", app_page())
 write("custom/index.html", custom_index())
 for c in customs:
     write(f"custom/{c['slug']}/index.html", custom_page(c))
