@@ -14,8 +14,22 @@
 
   function cur() { return +document.body.dataset.slug; }
   function idx(n) { for (var i = 0; i < ORDER.length; i++) if (ORDER[i][0] === n) return i; return -1; }
-  function after(n) { return ORDER[(idx(n) + 1) % ORDER.length]; }
   function autoOn() { return store.get("wse-auto") !== "off"; }
+  function shuffleOn() { return store.get("wse-shuffle") === "on"; }
+  // Shuffle: random pick, skipping the songs heard most recently so repeats stay rare.
+  var recent = [];
+  function remember(n) { recent = recent.filter(function (x) { return x !== n; }); recent.push(n); if (recent.length > Math.floor(ORDER.length / 2)) recent.shift(); }
+  function randomSong(n) {
+    var pool = ORDER.filter(function (s) { return s[0] !== n && recent.indexOf(s[0]) < 0; });
+    if (!pool.length) pool = ORDER.filter(function (s) { return s[0] !== n; });
+    return pool.length ? pool[Math.floor(Math.random() * pool.length)] : ORDER[0];
+  }
+  var queued = null;
+  function after(n) {
+    if (!shuffleOn()) return ORDER[(idx(n) + 1) % ORDER.length];
+    if (!queued || queued[0] === n) queued = randomSong(n);
+    return queued;
+  }
 
   // Remember the auto-play choice; keep every checkbox in sync after swaps.
   document.addEventListener("change", function (ev) {
@@ -23,8 +37,23 @@
       store.set("wse-auto", ev.target.checked ? "on" : "off");
       if (!ev.target.checked) cancelUpNext();
     }
+    if (ev.target.matches && ev.target.matches("[data-shuffle]")) {
+      store.set("wse-shuffle", ev.target.checked ? "on" : "off");
+      queued = null; cancelUpNext(); syncAuto();
+    }
   });
-  function syncAuto() { document.querySelectorAll("[data-auto]").forEach(function (c) { c.checked = autoOn(); }); }
+  function syncAuto() {
+    document.querySelectorAll("[data-auto]").forEach(function (c) { c.checked = autoOn(); });
+    document.querySelectorAll("[data-shuffle]").forEach(function (c) { c.checked = shuffleOn(); });
+    // With shuffle on, the next arrow jumps to a random song.
+    var nx = document.querySelectorAll(".songnav .sn")[1];
+    if (nx) {
+      if (!nx.dataset.seq) nx.dataset.seq = nx.dataset.go + "|" + nx.innerHTML;
+      var seq = nx.dataset.seq.split("|");
+      if (shuffleOn()) { var r = after(cur()); nx.dataset.go = r[0]; nx.href = PATH + "/" + r[0] + "/"; nx.innerHTML = "&#128256; #" + r[0]; nx.setAttribute("aria-label", "Random song, number " + r[0]); }
+      else { nx.dataset.go = seq[0]; nx.href = PATH + "/" + seq[0] + "/"; nx.innerHTML = seq.slice(1).join("|"); nx.setAttribute("aria-label", "Next song, number " + seq[0]); }
+    }
+  }
 
   function box() { return document.querySelector("[data-upnext]"); }
   function cancelUpNext() { clearInterval(timer); timer = null; var b = box(); if (b) { b.hidden = true; b.innerHTML = ""; } }
@@ -65,6 +94,7 @@
       document.querySelector("main.wrap").replaceWith(newMain);
       document.title = doc.title;
       document.body.dataset.slug = String(n);
+      remember(n); queued = null;
       player.src = src;
       if (!fromHistory) history.pushState({ n: n }, "", url);
       syncAuto();
@@ -95,6 +125,7 @@
   });
   history.replaceState({ n: cur() }, "", location.href);
 
+  remember(cur());
   syncAuto();
   // "Play them all" from the home page: turn auto-play on and try to start (a tap on Play works if the browser blocks it).
   if (/[?&]playall=1/.test(location.search)) {

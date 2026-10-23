@@ -148,16 +148,25 @@ def song_page(s, prev_s, next_s):
            f'<a href="{PATH}/">All songs</a>'
            f'<a href="{PATH}/{next_s["n"]}/" data-go="{next_s["n"]}">#{next_s["n"]} {e(next_s["title"])} &rarr;</a>')
     songnav = (f'<div class="songnav"><a class="sn" href="{PATH}/{prev_s["n"]}/" data-go="{prev_s["n"]}" aria-label="Previous song, number {prev_s["n"]}">&#9664; #{prev_s["n"]}</a>'
-               f'<label class="auto"><input type="checkbox" data-auto checked> Auto-play next</label>'
+               f'<span class="toggles"><label class="auto"><input type="checkbox" data-auto checked> Auto-play next</label>'
+               f'<label class="auto"><input type="checkbox" data-shuffle> &#128256; Shuffle</label></span>'
                f'<a class="sn" href="{PATH}/{next_s["n"]}/" data-go="{next_s["n"]}" aria-label="Next song, number {next_s["n"]}">#{next_s["n"]} &#9654;</a></div>'
                f'<div class="upnext" data-upnext hidden></div>')
+    cover_img = f'<img class="cover" src="{PATH}/songs/{n}/cover.jpg" alt="" width="720" height="720">'
+    hook = yt_embed(s.get('hook_url'))
+    if hook.startswith('<div class="hook">'):
+        # Hook video goes up top where it's easy to tap; cover art moves below.
+        top = hook.replace('class="hook"', 'class="hook hook-top"', 1).replace(' loading="lazy"', '')
+        below = f'<div class="cover-below">{cover_img}</div>'
+    else:
+        top, below = cover_img, hook
     return head(full, f"Listen to {full}. It's terrible. Rate it 1-10.",
                 f"{BASE}/{n}/", f"{BASE}/songs/{n}/cover.jpg",
                 extra=f'<script>window.WSE_ORDER={order};window.WSE_PATH="{PATH}";</script>\n<script src="{PATH}/assets/player.js?v={PJSV}" defer></script>\n') + f"""<body class="song" data-slug="{n}">
 <header class="bar"><a class="brand" href="{PATH}/">WORST SONG EVER</a></header>
 <main class="wrap">
   <section class="hero">
-    <img class="cover" src="{PATH}/songs/{n}/cover.jpg" alt="" width="720" height="720">
+    {top}
     <div class="meta">
       <div class="badge">WORST SONG EVER <b>#{n}</b></div>
       <h1>{e(s['title'])}</h1>
@@ -167,7 +176,7 @@ def song_page(s, prev_s, next_s):
       <button class="share" type="button" data-share>Share this crime</button>
     </div>
   </section>
-  {yt_embed(s.get('hook_url'))}
+  {below}
   <section class="lyrics">
     <h2>Lyrics</h2>
     {lyrics_html(lyr)}

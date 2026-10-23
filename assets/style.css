@@ -91,6 +91,8 @@ audio { width: 100%; margin-bottom: 14px; }
 
 .hook { margin-top: 32px; max-width: 380px; aspect-ratio: 9 / 16; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); }
 .hook iframe { width: 100%; height: 100%; border: 0; }
+.hook.hook-top { margin-top: 0; width: 100%; }
+.cover-below { margin-top: 32px; max-width: 380px; }
 .hooklink a { color: var(--gold); font-weight: 800; }
 
 .lyrics { max-width: 640px; }
@@ -109,6 +111,8 @@ audio { width: 100%; margin-bottom: 14px; }
   .cardtext { padding: 10px; }
   .t { font-size: 14px; }
   .hook { max-width: 100%; }
+  .hook.hook-top { max-width: 380px; margin: 0 auto; }
+  .cover-below { max-width: 100%; }
 }
 .fnote { color: var(--dim); margin: 10px 0 0; max-width: 40ch; }
 .empty { color: var(--dim); font-size: 18px; }
@@ -206,7 +210,8 @@ audio { width: 100%; margin-bottom: 14px; }
 .songnav .sn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 76px; padding: 0 14px;
   border: 2px solid var(--gold); border-radius: 999px; color: var(--gold); font-weight: 800; text-decoration: none; }
 .songnav .sn:hover { background: var(--gold); color: #16121f; }
-.songnav .auto { display: inline-flex; align-items: center; gap: 8px; color: var(--dim); font-size: 14px; cursor: pointer; min-height: 44px; }
+.songnav .auto { display: inline-flex; align-items: center; gap: 8px; color: var(--dim); font-size: 14px; cursor: pointer; min-height: 36px; }
+.songnav .toggles { display: flex; flex-direction: column; align-items: flex-start; }
 .songnav .auto input { width: 20px; height: 20px; accent-color: var(--gold); }
 .upnext { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; background: var(--panel); border: 1px solid var(--gold);
   border-radius: 14px; padding: 12px 14px; margin: 0 0 14px; max-width: 420px; }
