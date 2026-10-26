@@ -140,6 +140,10 @@ audio { width: 100%; margin-bottom: 14px; }
 .reqbtn:hover { background: #ffd666; }
 .reqrow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; margin-top: 20px; }
 .reqrow .reqbtn { margin-top: 0; }
+.follow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 16px; font-size: 14px; }
+.follow .fl { color: var(--dim); margin-right: 2px; }
+.follow a { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); font-weight: 700; text-decoration: none; }
+.follow a:hover { border-color: var(--gold); color: var(--gold); }
 .reqlink { color: var(--gold); font-weight: 700; }
 .ctaband { margin: 36px 0 8px; padding: 22px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); text-align: center; }
 .ctaband h2 { margin: 0 0 12px; }

@@ -174,6 +174,7 @@ def song_page(s, prev_s, next_s):
       {songnav}
       <div class="counts"><span>&#127911; <b data-plays>&ndash;</b> plays</span><span>&#128064; <b data-visits>&ndash;</b> visits</span><span>{mmss(s['duration'])}</span></div>
       <button class="share" type="button" data-share>Share this crime</button>
+      {FOLLOW}
     </div>
   </section>
   {below}
@@ -188,6 +189,12 @@ def song_page(s, prev_s, next_s):
 </body>
 </html>
 """
+
+
+FOLLOW = ('<div class="follow"><span class="fl">Get new songs first:</span>'
+          '<a href="https://www.tiktok.com/@theworstsong" target="_blank" rel="noopener">TikTok</a>'
+          '<a href="https://www.instagram.com/worst_song/" target="_blank" rel="noopener">Instagram</a>'
+          '<a href="https://www.youtube.com/@TheWorstSong?sub_confirmation=1" target="_blank" rel="noopener">YouTube</a></div>')
 
 
 def index_page():
@@ -229,6 +236,7 @@ r.querySelector("[data-potd-title]").textContent=h.t;}}catch(e){{}}}})();</scrip
     <p>Intentionally terrible songs. Genuinely catchy. You've been warned.</p>
     <div class="counts big"><span>&#128064; <b data-total-visits>&ndash;</b> visits</span><span>&#127911; <b data-total-plays>&ndash;</b> plays</span><span>{len(songs)} songs</span></div>
     <div class="reqrow"><a class="reqbtn playall" href="{PATH}/{min(s['n'] for s in songs)}/?playall=1">&#9654; Play them all, in order</a><a class="reqbtn" href="{PATH}/custom/">&#127925; Hear custom songs &rarr;</a></div>
+    {FOLLOW}
   </section>
   {potd}
   </div>
