@@ -198,16 +198,40 @@ def index_page():
   <span class="c">&#127911; <b data-plays-for="{s['n']}">&ndash;</b> &middot; {mmss(s['duration'])}</span></div>
 </a>""" for s in songs)
     titles = {str(s["n"]): s["title"] for s in songs}
+    # Song of the Day: only songs with a live Hook video. Picked in the browser by Mountain-time date,
+    # so it rotates daily without a rebuild. The build-day pick is baked in as the no-JS fallback.
+    import datetime, zoneinfo
+    hooked = sorted(({"n": s["n"], "t": s["title"], "id": m.group(1)} for s in songs
+                     for m in [re.search(r"(?:youtu\.be/|v=|shorts/)([\w-]{11})", s.get("hook_url") or "")] if m),
+                    key=lambda h: h["n"])
+    potd = ""
+    if hooked:
+        today = datetime.datetime.now(zoneinfo.ZoneInfo("America/Denver")).date()
+        h = hooked[(today - datetime.date(1970, 1, 1)).days % len(hooked)]
+        potd = f"""<aside class="potd" data-potd>
+    <div class="potdlbl">&#11088; Song of the Day</div>
+    <div class="potdvid"><iframe data-potd-vid src="https://www.youtube-nocookie.com/embed/{h['id']}" title="Song of the Day Hook video" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
+    <a class="potdt" data-potd-link href="{PATH}/{h['n']}/"><span class="num" data-potd-num>#{h['n']}</span> <span data-potd-title>{e(h['t'])}</span> &rarr;</a>
+  </aside>
+  <script>(function(){{var L={json.dumps(hooked, ensure_ascii=False)},P="{PATH}";try{{
+var d=new Intl.DateTimeFormat("en-CA",{{timeZone:"America/Denver"}}).format(new Date()).split("-");
+var day=Math.floor(Date.UTC(+d[0],d[1]-1,+d[2])/864e5),h=L[day%L.length],r=document.querySelector("[data-potd]");
+var v=r.querySelector("[data-potd-vid]"),u="https://www.youtube-nocookie.com/embed/"+h.id;if(v.src!==u)v.src=u;
+r.querySelector("[data-potd-link]").href=P+"/"+h.n+"/";r.querySelector("[data-potd-num]").textContent="#"+h.n;
+r.querySelector("[data-potd-title]").textContent=h.t;}}catch(e){{}}}})();</script>"""
     return head("Worst Song Ever", "Intentionally terrible songs, genuinely well made. Pick one. Regret it.",
                 f"{BASE}/", f"{BASE}/songs/{songs[0]['n']}/cover.jpg") + f"""<body class="home" data-slug="home">
 <header class="bar"><a class="brand" href="{PATH}/">WORST SONG EVER</a></header>
 <main class="wrap">
+  <div class="introrow">
   <section class="intro">
     <h1>WORST SONG<br>EVER</h1>
     <p>Intentionally terrible songs. Genuinely catchy. You've been warned.</p>
     <div class="counts big"><span>&#128064; <b data-total-visits>&ndash;</b> visits</span><span>&#127911; <b data-total-plays>&ndash;</b> plays</span><span>{len(songs)} songs</span></div>
     <div class="reqrow"><a class="reqbtn playall" href="{PATH}/{min(s['n'] for s in songs)}/?playall=1">&#9654; Play them all, in order</a><a class="reqbtn" href="{PATH}/custom/">&#127925; Hear custom songs &rarr;</a></div>
   </section>
+  {potd}
+  </div>
   <a class="apppitch" href="{PATH}/app/" data-getapp>
     <img src="{PATH}/assets/app/icon-192.png" alt="" width="64" height="64">
     <span class="apt"><b>Get the Worst Song Ever app</b><small>Free. No app store. 2 taps. Every terrible song, one tap from your home screen.</small></span>
