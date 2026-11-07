@@ -93,6 +93,9 @@ def yt_embed(url):
     if m:
         return (f'<div class="hook"><iframe src="https://www.youtube-nocookie.com/embed/{m.group(1)}" '
                 'title="Hook video" allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>')
+    if url and re.search(r"\.mp4(\?|$)", url):
+        return (f'<div class="hook"><video src="{e(url)}" controls playsinline loop preload="metadata" '
+                'title="Hook video" loading="lazy"></video></div>')
     if url:
         return f'<p class="hooklink"><a href="{e(url)}" target="_blank" rel="noopener">Watch the Hook video &rarr;</a></p>'
     return ""
