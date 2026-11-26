@@ -7,7 +7,8 @@ Builds the Worst Song Ever site from data/songs.json + data/lyrics/<n>.txt.
 Adding a song:
   1. songs/<n>/audio.mp3 and songs/<n>/cover.jpg
   2. data/lyrics/<n>.txt   ([Section] lines become headers)
-  3. an entry in data/songs.json: {"n": 37, "title": "...", "duration": 200.0, "hook_url": ""}
+  3. an entry in data/songs.json: {"n": 37, "title": "...", "duration": 200.0, "hook_url": "", "video_url": ""}
+     hook_url = the YouTube Short (Hook); video_url = the full-length 16:9 music video (shown as "Full Music Video").
   4. python3 build.py, then commit and push.
   5. Add its counter row in Supabase once:
        insert into public.songs (slug, title) values ('37', 'Title');
@@ -101,6 +102,16 @@ def yt_embed(url):
     return ""
 
 
+def full_embed(url):
+    """Full-length 16:9 music video (data/songs.json "video_url"), shown below the hero on the song page."""
+    m = re.search(r"(?:youtu\.be/|v=|shorts/|embed/)([\w-]{11})", url or "")
+    if not m:
+        return ""
+    return ('<section class="fullvid"><h2>&#127916; Full Music Video</h2><div class="fv">'
+            f'<iframe src="https://www.youtube-nocookie.com/embed/{m.group(1)}" title="Full music video" '
+            'allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div></section>')
+
+
 def head(title, desc, url, image, hidden=False, extra=""):
     robots = '<meta name="robots" content="noindex, nofollow, noarchive">\n' if hidden else ""
     return f"""<!doctype html>
@@ -180,6 +191,7 @@ def song_page(s, prev_s, next_s):
       {FOLLOW}
     </div>
   </section>
+  {full_embed(s.get('video_url'))}
   {below}
   <section class="lyrics">
     <h2>Lyrics</h2>
