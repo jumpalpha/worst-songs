@@ -109,7 +109,11 @@ def full_embed(url):
         return ""
     return ('<section class="fullvid"><h2>&#127916; Full Music Video</h2><div class="fv">'
             f'<iframe src="https://www.youtube-nocookie.com/embed/{m.group(1)}" title="Full music video" '
-            'allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div></section>')
+            'allow="encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>'
+            '<div class="ytrow">'
+            f'<a class="reqbtn ytbtn" href="https://www.youtube.com/watch?v={m.group(1)}" target="_blank" rel="noopener">&#9654; Watch on YouTube</a>'
+            f'<a class="reqbtn subbtn" href="{YT_SUB}" target="_blank" rel="noopener">&#128276; Subscribe</a>'
+            '</div></section>')
 
 
 def head(title, desc, url, image, hidden=False, extra=""):
@@ -197,6 +201,7 @@ def song_page(s, prev_s, next_s):
     <h2>Lyrics</h2>
     {lyrics_html(lyr)}
   </section>
+  {YT_BAND}
   {APP_BAND}
   <nav class="pager">{''.join(nav)}</nav>
 </main>
@@ -204,6 +209,12 @@ def song_page(s, prev_s, next_s):
 </body>
 </html>
 """
+
+
+YT_SUB = "https://www.youtube.com/@TheWorstSong?sub_confirmation=1"
+YT_BAND = ('<section class="ctaband ytband"><h2>&#128276; A new Worst Song every day</h2>'
+           '<p>Full music videos and Shorts drop on YouTube first. Subscribe so you never miss one.</p>'
+           f'<a class="reqbtn subbtn" href="{YT_SUB}" target="_blank" rel="noopener">Subscribe on YouTube &rarr;</a></section>')
 
 
 FOLLOW = ('<div class="follow"><span class="fl">Get new songs first:</span>'
@@ -250,7 +261,7 @@ r.querySelector("[data-potd-title]").textContent=h.t;}}catch(e){{}}}})();</scrip
     <h1>WORST SONG<br>EVER</h1>
     <p>Intentionally terrible songs. Genuinely catchy. You've been warned.</p>
     <div class="counts big"><span>&#128064; <b data-total-visits>&ndash;</b> visits</span><span>&#127911; <b data-total-plays>&ndash;</b> plays</span><span>{len(songs)} songs</span></div>
-    <div class="reqrow"><a class="reqbtn playall" href="{PATH}/{min(s['n'] for s in songs)}/?playall=1">&#9654; Play them all, in order</a><a class="reqbtn" href="{PATH}/custom/">&#127925; Hear custom songs &rarr;</a></div>
+    <div class="reqrow"><a class="reqbtn playall" href="{PATH}/{min(s['n'] for s in songs)}/?playall=1">&#9654; Play them all, in order</a><a class="reqbtn subbtn" href="{YT_SUB}" target="_blank" rel="noopener">&#128276; Subscribe on YouTube</a></div>
     {FOLLOW}
   </section>
   {potd}
@@ -497,7 +508,7 @@ def custom_page(c):
     <p class="rmsg" data-msg aria-live="polite"></p>
   </section>
   {f'<section class="lyrics"><h2>Lyrics</h2>{lyr}</section>' if lyr else ''}
-  <section class="ctaband"><h2>Want one like this?</h2><a class="reqbtn" href="{PATH}/request/">Request your song <b>$5</b> &rarr;</a></section>
+  {YT_BAND}
   <nav class="pager"><a href="{CUSTOM_PATH}/">All custom songs</a><a href="{PATH}/">Worst Song Ever</a></nav>
 </main>
 <footer class="foot">Made on purpose. &copy; Worst Song Ever</footer>
@@ -522,15 +533,15 @@ def custom_index():
       <label class="sortl">Sort <select data-sort><option value="new">Newest</option><option value="plays">Most played</option><option value="rated">Top rated</option></select></label>
     </div>""" if customs else ""
     body = (f'{tools}\n    <div class="grid" data-custom-grid>\n{cards}\n    </div>' if customs
-            else '<p class="empty">The first custom songs are being written right now. Yours could be next.</p>')
-    return head("Custom Songs", "Custom songs made to order for birthdays, weddings, anniversaries and just because.",
+            else '<p class="empty">No custom songs here yet.</p>')
+    return head("Custom Songs", "Custom songs made for birthdays, weddings, anniversaries and just because.",
                 f"{BASE}/custom/", f"{BASE}/assets/brand/logo.png", extra=CUSTOM_JS) + f"""<body class="home" data-slug="">
 <header class="bar"><a class="brand" href="{PATH}/">WORST SONG EVER</a></header>
 <main class="wrap">
   <section class="intro">
     <h1>CUSTOM<br>SONGS</h1>
-    <p>Made to order for birthdays, weddings, anniversaries, and just because.</p>
-    <a class="reqbtn" href="{PATH}/request/">Want your own song? <b>$5</b> &rarr;</a>
+    <p>Made for birthdays, weddings, anniversaries, and just because.</p>
+    <a class="reqbtn subbtn" href="{YT_SUB}" target="_blank" rel="noopener">&#128276; Subscribe on YouTube</a>
   </section>
   <section>
     {body}
